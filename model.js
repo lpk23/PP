@@ -86,6 +86,8 @@ const TrainingDirection = sequelize.define('training_direction', {
         type: DataTypes.STRING(255),
         allowNull: true,
     },
+}, {
+    tableName: 'training_direction' // добавьте это поле, указывающее имя таблицы
 });
 
 // Определение модели для таблицы "graduates"
@@ -185,8 +187,6 @@ const User = sequelize.define('users', {
         allowNull: true,
     },
 });
-
-
 
 // Определение модели для таблицы "user_roles"
 const UserRole = sequelize.define('user_roles', {

@@ -56,6 +56,12 @@ module.exports = {
             {
                 roleName: 'ManageOtherAccounts',
             },
+            {
+                roleName: 'ManageTrainingDirection'
+            },
+            {
+                roleName: 'ManageJobHistory'
+            }
         ];
 
         await queryInterface.bulkInsert('roles', rolesData, {});
@@ -288,7 +294,7 @@ module.exports = {
         });
     },
 
-    down: async (queryInterface, Sequelize) => {
+    down: async (queryInterface) => {
         await queryInterface.dropTable('user_roles');
         await queryInterface.dropTable('job_history');
         await queryInterface.dropTable('graduates');

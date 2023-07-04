@@ -4,7 +4,7 @@ const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const { Op } = require('sequelize');
-const {checkPermissions,generateResetCode}=require('./Helpers')
+const {generateResetCode}=require('./Helpers')
 
 function login(request, response) {
     if (!request.body) return response.sendStatus(400);
@@ -92,55 +92,36 @@ async function register(request, response) {
 
 function getUsers(request, response) {
     const token = request.headers['authorization'];
-
     // Проверяем наличие токена авторизации
     if (!token) {
         return response.status(401).json({ error: 'Отсутствует токен авторизации' });
     }
 
-    // Проверяем право "ManageOtherAccounts"
-    const requiredPermission = 'ManageOtherAccounts';
+    User.findAll({
+        include: {
+            model: Role,
+            through: { attributes: [] } // Исключаем атрибуты связи из результата
+        }
+    })
+        .then((users) => {
+            // Преобразуем результат в нужный формат с правами пользователя
+            const formattedUsers = users.map((user) => {
+                const userRoles = user.roles.map((role) => role.roleName);
+                return {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    roles: userRoles
+                };
+            });
 
-    checkPermissions(token, requiredPermission)
-        .then((permissionStatus) => {
-            if (permissionStatus === 'OK') {
-                User.findAll({
-                    include: {
-                        model: Role,
-                        through: { attributes: [] } // Исключаем атрибуты связи из результата
-                    }
-                })
-                    .then((users) => {
-                        // Преобразуем результат в нужный формат с правами пользователя
-                        const formattedUsers = users.map((user) => {
-                            const userRoles = user.roles.map((role) => role.roleName);
-                            return {
-                                id: user.id,
-                                name: user.name,
-                                email: user.email,
-                                roles: userRoles
-                            };
-                        });
-
-                        response.json(formattedUsers);
-                    })
-                    .catch((error) => {
-                        console.error('Ошибка при получении пользователей:', error);
-                        response.sendStatus(500);
-                    });
-            } else {
-                response.status(403).json({ error: 'Отказано в доступе' });
-            }
+            response.json(formattedUsers);
         })
         .catch((error) => {
-            console.error('Ошибка при проверке прав доступа:', error);
+            console.error('Ошибка при получении пользователей:', error);
             response.sendStatus(500);
         });
 }
-
-
-
-
 
 async function deleteOwnAccount(req, res) {
     try {
@@ -152,39 +133,19 @@ async function deleteOwnAccount(req, res) {
             return res.status(401).json({ error: 'Отсутствует токен авторизации' });
         }
 
-        // Проверяем право "DeleteOwnAccount"
-        const requiredPermission = 'DeleteOwnAccount';
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'Пользователь не найден' });
+        }
 
-        checkPermissions(token, requiredPermission)
-            .then(async (permissionStatus) => {
-                if (permissionStatus === 'OK') {
-                    User.findByPk(userId)
-                        .then(async (user) => {
-                            if (!user) {
-                                return res.status(404).json({ error: 'Пользователь не найден' });
-                            }
-                            await UserRole.destroy({ where: { userId } });
-                            await user.destroy();
-                            res.json({ message: 'Аккаунт успешно удален' });
-                        })
-                        .catch((error) => {
-                            console.error('Ошибка при удалении аккаунта:', error);
-                            res.sendStatus(500);
-                        });
-                } else {
-                    res.status(403).json({ error: 'Отказано в доступе' });
-                }
-            })
-            .catch((error) => {
-                console.error('Ошибка при проверке прав доступа:', error);
-                res.sendStatus(500);
-            });
+        await UserRole.destroy({ where: { userId } });
+        await user.destroy();
+        res.json({ message: 'Аккаунт успешно удален' });
     } catch (error) {
         console.error('Ошибка при удалении аккаунта:', error);
         res.sendStatus(500);
     }
 }
-
 
 async function deleteOtherAccount(req, res) {
     try {
@@ -196,33 +157,14 @@ async function deleteOtherAccount(req, res) {
             return res.status(401).json({ error: 'Отсутствует токен авторизации' });
         }
 
-        // Проверяем право "DeleteOtherAccount"
-        const requiredPermission = 'ManageOtherAccounts';
+        const user = await User.findByPk(id);
+        if (!user) {
+            return res.status(404).json({ error: 'Пользователь не найден' });
+        }
 
-        checkPermissions(token, requiredPermission)
-            .then(async (permissionStatus) => {
-                if (permissionStatus === 'OK') {
-                    User.findByPk(id)
-                        .then(async (user) => {
-                            if (!user) {
-                                return res.status(404).json({ error: 'Пользователь не найден' });
-                            }
-                            await UserRole.destroy({ where: { userId:id } });
-                            await user.destroy();
-                            res.json({ message: 'Аккаунт успешно удален' });
-                        })
-                        .catch((error) => {
-                            console.error('Ошибка при удалении аккаунта:', error);
-                            res.sendStatus(500);
-                        });
-                } else {
-                    res.status(403).json({ error: 'Отказано в доступе' });
-                }
-            })
-            .catch((error) => {
-                console.error('Ошибка при проверке прав доступа:', error);
-                res.sendStatus(500);
-            });
+        await UserRole.destroy({ where: { userId: id } });
+        await user.destroy();
+        res.json({ message: 'Аккаунт успешно удален' });
     } catch (error) {
         console.error('Ошибка при удалении аккаунта:', error);
         res.sendStatus(500);
@@ -383,10 +325,8 @@ function resetPassword(request, response) {
                     }
 
                     // Хеширование нового пароля
-                    const hashedPassword = bcrypt.hashSync(newPassword, 10);
-
                     // Сохранение нового пароля в базе данных или другом хранилище
-                    user.password = hashedPassword;
+                    user.password = bcrypt.hashSync(newPassword, 10);
                     user.resetCode = null; // Очистка кода сброса пароля
                     await user.save();
 
@@ -403,16 +343,10 @@ function resetPassword(request, response) {
     }
 }
 
-async function updateUser(request, response) {
+async function updateUser(request, response) { // TODO: Доработать, и проверить
     try {
         const { name, email } = request.body;
         const userId = request.userId;
-
-        // Проверка прав доступа
-        const hasPermission = await checkPermissions(request.token, 'ManageOtherAccounts');
-        if (!hasPermission) {
-            return response.status(403).json({ error: 'Недостаточно прав доступа' });
-        }
 
         // Найти пользователя по их ID
         const user = await User.findByPk(userId);
@@ -439,15 +373,9 @@ async function updateUser(request, response) {
     }
 }
 
-async function updateUserRole(request, response) {
+async function updateUserRole(request, response) { // TODO: Доработать, и проверить
     try {
         const { userId, roles } = request.body;
-
-        // Проверка прав доступа
-        const hasPermission = await checkPermissions(request.token, 'ManageOtherAccounts');
-        if (!hasPermission) {
-            return response.status(403).json({ error: 'Недостаточно прав доступа' });
-        }
 
         const user = await User.findByPk(userId);
 
