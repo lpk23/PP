@@ -1,8 +1,13 @@
-const {Graduate} = require('./model');
+const {Graduate,TrainingDirection,JobHistory} = require('./model');
 
 // Функция создания нового выпускника
 async function createGraduate(request, response) {
     try {
+        // Проверка на пустоту значения fullName
+        if (!graduateData.fullName) {
+            response.status(400).json({ error: 'Необходимо указать полное имя выпускника' });
+            return;
+        }
         const graduate = await Graduate.create(request.body);
         response.json(graduate);
     } catch (error) {
@@ -26,7 +31,21 @@ async function getAllGraduates(request, response) {
 
         if (passedPermissions.includes(permission[2])) {
             // Проверка разрешения 'ManageGraduates'
-            graduates = await Graduate.findAll({ offset, limit: 100 });
+            graduates = await Graduate.findAll({
+                offset,
+                limit: 100,
+                include: [
+                    {
+                        model: TrainingDirection,
+                        attributes: ['id', 'code', 'name'],
+                    },
+                    {
+                        model: JobHistory,
+                        attributes: ['id', 'jobType', 'startDate', 'endDate', 'employmentBook', 'organizationName', 'okved', 'inn', 'registrationRegion', 'position', 'selfEmploymentActivity', 'militaryServiceLocation'],
+                    },
+                ],
+                attributes: { exclude: ['trainingDirectionId'] },
+            });
         } else if (passedPermissions.includes(permission[1])) {
             // Проверка разрешения 'ViewGraduateDetails'
             graduates = await Graduate.findAll({ offset, limit: 100 });

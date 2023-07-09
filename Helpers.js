@@ -1,7 +1,9 @@
 const jwt = require('jsonwebtoken');
-const { User, Role, UserRole } = require('./model');
+const { User, Role, UserRole, Graduate, JobHistory,TrainingDirection} = require('./model');
 require('dotenv').config();
-
+const puppeteer = require('puppeteer');
+const fs = require('fs');
+const {where} = require("sequelize");
 function verifyToken(req, res, next) {
     const token = req.headers['authorization'];
 
@@ -18,37 +20,9 @@ function verifyToken(req, res, next) {
         }
 
         req.userId = decoded.userId;
-        req.userRoles = decoded.roles; // Добавляем список прав в объект запроса
 
         next();
     });
-}
-
-
-async function checkPermissions(token, requiredPermission) {
-    if (!token) {
-        return null;
-    }
-
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-
-        if (decoded && decoded.userId) {
-            // Получение информации о пользователе из базы данных
-            const user = await User.findOne({
-                where: { id: decoded.userId },
-                include: [{ model: Role, through: UserRole, as: 'roles' }]
-            });
-
-            if (user && user.roles && user.roles.some(role => role.roleName === requiredPermission)) {
-                return "OK";
-            }
-        }
-    } catch (error) {
-        console.error('Ошибка при проверке прав доступа:', error);
-    }
-
-    return null;
 }
 
 function checkPermission(requiredPermissions) {
@@ -115,9 +89,119 @@ function generateResetCode() {
 
     return resetCode;
 }
+
+
+async function exportStudentInfoToPDF(studentId, filePath) {
+    try {
+        const student = await Graduate.findByPk(studentId, {
+            include: [
+                {
+                    model: TrainingDirection,
+                    attributes: ['id', 'code', 'name'],
+                },
+                // {
+                //     model: JobHistory,
+                //     attributes: ['id', 'jobType', 'startDate', 'endDate', 'employmentBook', 'organizationName', 'okved', 'inn', 'registrationRegion', 'position', 'selfEmploymentActivity', 'militaryServiceLocation'],
+                //     order: [['startDate', 'ASC']],},
+            ],
+            attributes: { exclude: ['trainingDirectionId'] },
+        });
+
+        if (!student) {
+            response.status(500).json({ error: 'Ошибка' });
+            return;
+        }
+
+        const templatePath = './template.html';
+        const template = await fs.promises.readFile(templatePath, 'utf8');
+
+        const compiledTemplate = template.replace('{{fullName}}', student.fullName)
+            .replace('{{dateOfBirth}}', formatDate(student.dateOfBirth))
+            .replace('{{gender}}', student.gender)
+            .replace('{{citizenship}}', student.citizenship)
+            .replace('{{address}}', student.address)
+            .replace('{{phone}}', student.phone)
+            .replace('{{email}}', student.email)
+            .replace('{{snils}}', student.snils)
+            .replace('{{educationForm}}', student.educationForm)
+            .replace('{{graduationYear}}', student.graduationYear);
+
+        let jobHistoriesHtml = '';
+        const job = await JobHistory.findAll({
+            where: { graduateId: studentId },
+            order: [['startDate', 'ASC']]
+        });
+
+
+        job.forEach((jobHistory) => {
+            let jobHistoryHtml = '';
+            if (jobHistory.jobType === 'выпустник') {
+                jobHistoryHtml = `
+                    <li>${formatDate(jobHistory.startDate)} Завершение обучения по направлению подготовки ${student.training_direction.code} ${student.training_direction.name}</li>
+                `;
+            }
+            if (jobHistory.jobType === 'работающий') {
+                jobHistoryHtml = `
+                    <li>${formatDate(jobHistory.startDate)} Трудоустройство в ${jobHistory.organizationName}, должность ${jobHistory.position}</li>
+                `;
+            }
+            if (jobHistory.jobType === 'безработный') {
+                jobHistoryHtml = `
+                    <li>${formatDate(jobHistory.startDate)} Безработный, поставлен на учёт</li>
+                `;
+            }
+            if (jobHistory.jobType === 'самозанятый') {
+                jobHistoryHtml = `
+                    <li>${formatDate(jobHistory.startDate)} Самозанятый, род деятельности - ${jobHistory.selfEmploymentActivity}</li>
+                `;
+            }
+            if (jobHistory.jobType === 'служба в ВС') {
+                jobHistoryHtml = `
+                    <li>${formatDate(jobHistory.startDate)} Служба в ВС РФ, в/ч ${jobHistory.militaryServiceLocation}, ${jobHistory.position}</li>
+                `;
+            }
+            jobHistoriesHtml += jobHistoryHtml;
+        });
+
+        const finalHtml = compiledTemplate.replace('{{jobHistories}}', jobHistoriesHtml);
+
+        const browser = await puppeteer.launch({ headless: 'new' });
+        const page = await browser.newPage();
+        await page.setContent(finalHtml, { waitUntil: 'networkidle0' });
+
+        await page.pdf({ path: filePath, format: 'A4' });
+
+        await browser.close();
+
+        console.log(`Сведения о студенте успешно экспортированы в PDF по пути: ${filePath}`);
+    } catch (error) {
+        console.error('Ошибка при экспорте сведений о студенте в PDF:', error);
+    }
+}
+
+function formatDate(date) {
+    return new Date(date).toLocaleDateString('ru-RU');
+}
+
+
+
+
+const permission = {
+    ViewGraduates: 'ViewGraduates',
+    ViewGraduateDetails: 'ViewGraduateDetails',
+    ManageGraduates: 'ManageGraduates',
+    ExportToPDF: 'ExportToPDF',
+    ImportData: 'ImportData',
+    DeleteOwnAccount: 'DeleteOwnAccount',
+    ManageOtherAccounts: 'ManageOtherAccounts',
+    ManageTrainingDirection: 'ManageTrainingDirection',
+    ManageJobHistory: 'ManageJobHistory'
+};
+
 module.exports = {
     verifyToken,
-    checkPermissions,
     generateResetCode,
-    checkPermission
+    checkPermission,
+    permission,
+    exportStudentInfoToPDF
 };

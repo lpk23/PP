@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    /* Стили для оформления PDF */
+    h1 {
+      color: #333;
+    }
+    p {
+      color: #666;
+    }
+    ul {
+      color: #999;
+    }
+  </style>
+  <title></title>
+</head>
+<body>
+<h1>Сведения о студенте</h1>
+<p><strong>ФИО:</strong> {{fullName}}</p>
+<p><strong>Дата рождения:</strong> {{dateOfBirth}}</p>
+<p><strong>Пол:</strong> {{gender}}</p>
+<p><strong>Гражданство:</strong> {{citizenship}}</p>
+<p><strong>Адрес:</strong> {{address}}</p>
+<p><strong>Телефон:</strong> {{phone}}</p>
+<p><strong>Email:</strong> {{email}}</p>
+<p><strong>СНИЛС:</strong> {{snils}}</p>
+<p><strong>Форма обучения:</strong> {{educationForm}}</p>
+<p><strong>Год выпуска:</strong> {{graduationYear}}</p>
+
+<h2>Хронология трудоустройства</h2>
+<ul>
+  {{jobHistories}}
+</ul>
+</body>
+</html>

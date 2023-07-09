@@ -36,19 +36,10 @@ module.exports = {
                 roleName: 'ManageGraduates',
             },
             {
-                roleName: 'ManageEmploymentInfo',
-            },
-            {
                 roleName: 'ExportToPDF',
             },
             {
                 roleName: 'ImportData',
-            },
-            {
-                roleName: 'ViewEmployers',
-            },
-            {
-                roleName: 'ViewEmployerDetails',
             },
             {
                 roleName: 'DeleteOwnAccount',
@@ -172,6 +163,10 @@ module.exports = {
                     key: 'id',
                 },
             },
+            profile: {
+                type: Sequelize.STRING(255),
+                allowNull: true,
+            },
             educationForm: {
                 type: Sequelize.STRING(50),
                 allowNull: true,
@@ -191,6 +186,7 @@ module.exports = {
                 defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             },
         });
+
         await queryInterface.createTable('job_history', {
             id: {
                 type: Sequelize.INTEGER,

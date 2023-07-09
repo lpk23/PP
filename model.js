@@ -68,6 +68,8 @@ const JobHistory = sequelize.define('job_history', {
         type: DataTypes.STRING(255),
         allowNull: true,
     },
+},{
+    tableName: 'job_history' // добавьте это поле, указывающее имя таблицы
 });
 
 // Определение модели для таблицы "training_direction"
@@ -137,6 +139,10 @@ const Graduate = sequelize.define('graduates', {
             model: 'training_direction',
             key: 'id',
         },
+    },
+    profile: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
     },
     educationForm: {
         type: DataTypes.STRING(50),

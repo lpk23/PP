@@ -4,7 +4,7 @@ const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const { Op } = require('sequelize');
-const {generateResetCode}=require('./Helpers')
+const {generateResetCode,permission}=require('./Helpers')
 
 function login(request, response) {
     if (!request.body) return response.sendStatus(400);
@@ -324,7 +324,6 @@ function resetPassword(request, response) {
                         return response.status(400).json({ error: 'Неверный код сброса' });
                     }
 
-                    // Хеширование нового пароля
                     // Сохранение нового пароля в базе данных или другом хранилище
                     user.password = bcrypt.hashSync(newPassword, 10);
                     user.resetCode = null; // Очистка кода сброса пароля
@@ -373,25 +372,37 @@ async function updateUser(request, response) { // TODO: Доработать, и
     }
 }
 
-async function updateUserRole(request, response) { // TODO: Доработать, и проверить
+async function updateUserRole(request, response) {
     try {
         const { userId, roles } = request.body;
-
+        // if (request.userId === userId){
+        //     return response.status(409).json({ error: 'Вы не можете изменить свои права' });
+        // }
         const user = await User.findByPk(userId);
 
         if (!user) {
             return response.status(404).json({ error: 'Пользователь не найден' });
         }
 
-        const foundRoles = await Role.findAll({
+        const foundRoles = [];
+
+        if (roles.includes('all')) {
+            foundRoles.push(...Object.values(permission));
+        } else {
+            foundRoles.push(...roles);
+        }
+
+        const existingRoles = await Role.findAll({
             where: {
                 roleName: {
-                    [Op.in]: roles,
+                    [Op.in]: foundRoles,
                 },
             },
         });
 
-        await user.setRoles(foundRoles);
+        if (existingRoles.length > 0) {
+            await user.setRoles(existingRoles);
+        }
 
         response.json({ status: 'OK', user });
     } catch (error) {

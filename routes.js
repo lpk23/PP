@@ -1,5 +1,6 @@
 const express = require("express");
-const { verifyToken, checkPermission } = require("./Helpers");
+const {exportPdf} = require("./export_import")
+const { verifyToken, checkPermission,permission } = require("./Helpers");
 const {
     login,
     register,
@@ -10,6 +11,7 @@ const {
     forgotPassword,
     resetPassword,
     verifyResetCode,
+    updateUserRole,
 } = require("./Account");
 const {
     createGraduate,
@@ -35,20 +37,7 @@ const {
 }=require("./JobHistory")
 
 const routes = express.Router();
-const permission = {
-    ViewGraduates: 'ViewGraduates',
-    ViewGraduateDetails: 'ViewGraduateDetails',
-    ManageGraduates: 'ManageGraduates',
-    ManageEmploymentInfo: 'ManageEmploymentInfo',
-    ExportToPDF: 'ExportToPDF',
-    ImportData: 'ImportData',
-    ViewEmployers: 'ViewEmployers',
-    ViewEmployerDetails: 'ViewEmployerDetails',
-    DeleteOwnAccount: 'DeleteOwnAccount',
-    ManageOtherAccounts: 'ManageOtherAccounts',
-    ManageTrainingDirection: 'ManageTrainingDirection',
-    ManageJobHistory: 'ManageJobHistory'
-};
+
 
 // Аккаунт
 routes.post("/login", login);
@@ -60,6 +49,7 @@ routes.get("/account", verifyToken, getAccount);
 routes.post("/forgot-password", forgotPassword);
 routes.post("/reset-password", resetPassword);
 routes.post("/verify-reset-code", verifyResetCode);
+routes.post("/Role", verifyToken,checkPermission([permission.ManageOtherAccounts]),updateUserRole);
 
 // Выпускники
 routes.post("/graduate", verifyToken, checkPermission([permission.ManageGraduates]), createGraduate);
@@ -71,16 +61,19 @@ routes.delete("/graduate/:id", verifyToken, checkPermission([permission.ManageGr
 // Направления подготовки
 routes.post("/training", verifyToken, checkPermission([permission.ManageTrainingDirection]), createTrainingDirection);
 routes.get("/training", verifyToken, checkPermission([permission.ManageTrainingDirection,permission.ManageGraduates,permission.ViewGraduateDetails]), getAllTrainingDirections);
-routes.get("/training/:id", verifyToken, checkPermission([permission.ManageTrainingDirection]), getTrainingDirectionById);
+routes.get("/training/:id", verifyToken, checkPermission([permission.ManageTrainingDirection,permission.ManageGraduates,permission.ViewGraduateDetails]), getTrainingDirectionById);
 routes.put("/training/:id", verifyToken, checkPermission([permission.ManageTrainingDirection]), updateTrainingDirection);
 routes.delete("/training/:id", verifyToken, checkPermission([permission.ManageTrainingDirection]), deleteTrainingDirection);
 
 // История работы
 routes.post("/job", verifyToken, checkPermission([permission.ManageJobHistory]), createJobHistory);
-routes.get("/job", verifyToken, checkPermission([permission.ManageJobHistory]), getAllJobHistory);
-routes.get("/job/:id", verifyToken, checkPermission([permission.ManageJobHistory]), getJobHistoryById);
+routes.get("/job", verifyToken, checkPermission([permission.ManageJobHistory,permission.ManageGraduates,permission.ViewGraduateDetails]), getAllJobHistory);
+routes.get("/job/:id", verifyToken, checkPermission([permission.ManageJobHistory,permission.ManageGraduates,permission.ViewGraduateDetails]), getJobHistoryById);
 routes.put("/job/:id", verifyToken, checkPermission([permission.ManageJobHistory]), updateJobHistory);
 routes.delete("/job/:id", verifyToken, checkPermission([permission.ManageJobHistory]), deleteJobHistory);
+
+// export and import
+routes.get("/graduate/:id/export",verifyToken,checkPermission([permission.ExportToPDF]),exportPdf)
 
 module.exports = routes;
 
