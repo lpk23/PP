@@ -1,5 +1,6 @@
 const express = require("express");
-const {exportPdf} = require("./export_import")
+const {exportPdf,importFile} = require("./export_import")
+const fileUpload = require('express-fileupload');
 const { verifyToken, checkPermission,permission } = require("./Helpers");
 const {
     login,
@@ -88,6 +89,7 @@ routes.delete("/employer/:id", verifyToken, checkPermission([permission.ManageEm
 
 // export and import
 routes.get("/graduate/:id/export",verifyToken,checkPermission([permission.ExportToPDF]),exportPdf)
+routes.post("/import",verifyToken,checkPermission([permission.ImportData]),fileUpload(),importFile)
 
 module.exports = routes;
 

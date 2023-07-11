@@ -182,8 +182,61 @@ function formatDate(date) {
     return new Date(date).toLocaleDateString('ru-RU');
 }
 
+async function importCSV(filePath) {
+    try {
+        // Чтение CSV файла и импорт данных
+        const csvData = fs.readFileSync(filePath, 'utf-8');
+        const rows = csvData.split('\n');
+        const headers = rows[0].split(';');
 
+        for (let i = 1; i < rows.length; i++) {
+            const row = rows[i].split(';');
+            const graduate = {};
 
+            for (let j = 0; j < headers.length; j++) {
+                const header = headers[j].trim();
+                const value = row[j] ? row[j].trim() : '';
+                graduate[header] = value;
+            }
+
+            const snils = graduate.snils;
+
+            if (snils) {
+                // Проверка существования записи по snils
+                const existingGraduate = await Graduate.findOne({
+                    where: { snils: snils },
+                });
+
+                if (existingGraduate) {
+                    console.log(`Запись выпускника с SNILS ${snils} уже существует в базе данных. Пропускаю импорт.`);
+                    continue; // Пропускаем импорт, если запись уже существует
+                }
+
+                // Поиск или создание TrainingDirection
+                const [trainingDirection, created] = await TrainingDirection.findOrCreate({
+                    where: {
+                        code: graduate.trainingDirectionCode,
+                        name: graduate.trainingDirectionName,
+                    },
+                });
+
+                // Создание выпускника в базе данных
+                const createdGraduate = await Graduate.create({
+                    ...graduate,
+                    trainingDirectionId: trainingDirection.id,
+                });
+
+                console.log('Создан выпускник:', createdGraduate.toJSON());
+            } else {
+                console.log('Значение СНИЛС не определено. Пропускаю импорт выпускника.');
+            }
+        }
+
+        console.log('Импорт данных завершен');
+    } catch (error) {
+        console.error('Ошибка при импорте данных:', error);
+    }
+}
 
 const permission = {
     ViewGraduates: 'ViewGraduates',
@@ -198,10 +251,13 @@ const permission = {
     ManageEmployers:'ManageEmployers'
 };
 
+
+
 module.exports = {
     verifyToken,
     generateResetCode,
     checkPermission,
     permission,
-    exportStudentInfoToPDF
+    exportStudentInfoToPDF,
+    importCSV
 };

@@ -1,4 +1,7 @@
-const { exportStudentInfoToPDF } = require("./Helpers");
+const { exportStudentInfoToPDF ,importCSV} = require("./Helpers");
+const {Graduate,TrainingDirection}=require('./model')
+const {parse} = require('csv-parse');
+
 const fs = require('fs');
 
 async function exportPdf(req, res) {
@@ -26,6 +29,91 @@ async function exportPdf(req, res) {
     }
 }
 
+async function importFile(req, res) {
+    try {
+        console.log(req);
+        if (!req.files || !req.files.csv) {
+            res.status(400).json({ error: 'CSV файл не найден' });
+            return;
+        }
+
+        const csvFile = req.files.csv;
+
+        // Сохранение загруженного файла во временную папку
+        const filePath = './tmp/' + Date.now() + '-' + csvFile.name;
+        await csvFile.mv(filePath);
+
+        // Чтение CSV файла и импорт данных
+        const csvData = fs.readFileSync(filePath, 'utf-8');
+
+        const records = await new Promise((resolve, reject) => {
+            parse(csvData, { delimiter: ';' }, (err, output) => {
+                if (err) reject(err);
+                resolve(output);
+            });
+        });
+
+        const headers = records[0];
+        const newGraduates = [];
+        const existingGraduates = [];
+
+        for (let i = 1; i < records.length; i++) {
+            const row = records[i];
+            const graduate = {};
+
+            for (let j = 0; j < headers.length; j++) {
+                const header = headers[j].trim();
+                const value = row[j] ? row[j].trim() : '';
+                graduate[header] = value;
+            }
+
+            const snils = graduate.snils;
+
+            if (snils) {
+                // Проверка существования записи по snils
+                const existingGraduate = await Graduate.findOne({
+                    where: { snils: snils },
+                });
+
+                if (existingGraduate) {
+                    existingGraduates.push(snils);
+                    console.log(`Запись выпускника с SNILS ${snils} уже существует в базе данных. Пропускаю импорт.`);
+                    continue; // Пропускаем импорт, если запись уже существует
+                }
+
+                // Поиск или создание TrainingDirection
+                const [trainingDirection, created] = await TrainingDirection.findOrCreate({
+                    where: {
+                        code: graduate.trainingDirectionCode,
+                        name: graduate.trainingDirectionName,
+                    },
+                });
+
+                // Создание выпускника в базе данных
+                const createdGraduate = await Graduate.create({
+                    ...graduate,
+                    trainingDirectionId: trainingDirection.id,
+                });
+
+                newGraduates.push(snils);
+                console.log('Создан выпускник:', createdGraduate.toJSON());
+            } else {
+                console.log('Значение СНИЛС не определено. Пропускаю импорт выпускника.');
+            }
+        }
+
+        console.log('Импорт данных завершен');
+
+        // Отправка успешного ответа с списком новых и существующих выпускников
+        res.json({ message: 'Импорт успешно выполнен', newGraduates, existingGraduates });
+    } catch (error) {
+        console.error('Ошибка при импорте:', error);
+        res.status(500).json({ error: 'Ошибка при импорте' });
+    }
+}
+
+
 module.exports = {
-    exportPdf
+    exportPdf,
+    importFile
 };

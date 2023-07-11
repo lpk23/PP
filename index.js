@@ -19,6 +19,7 @@ app.get("/reg",function(request, response){
 app.get("/reset",function(request, response){
     response.sendFile(page+"reset.html");
 });
+
 app.use(express.static(__dirname + '/page'));
 // Запуск сервера на порту 3000
 app.listen(3000, () => {
