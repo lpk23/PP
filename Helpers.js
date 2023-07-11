@@ -3,7 +3,6 @@ const { User, Role, UserRole, Graduate, JobHistory,TrainingDirection} = require(
 require('dotenv').config();
 const puppeteer = require('puppeteer');
 const fs = require('fs');
-const {where} = require("sequelize");
 function verifyToken(req, res, next) {
     const token = req.headers['authorization'];
 
@@ -195,7 +194,8 @@ const permission = {
     DeleteOwnAccount: 'DeleteOwnAccount',
     ManageOtherAccounts: 'ManageOtherAccounts',
     ManageTrainingDirection: 'ManageTrainingDirection',
-    ManageJobHistory: 'ManageJobHistory'
+    ManageJobHistory: 'ManageJobHistory',
+    ManageEmployers:'ManageEmployers'
 };
 
 module.exports = {

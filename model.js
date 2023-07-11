@@ -18,10 +18,10 @@ const JobHistory = sequelize.define('job_history', {
     graduateId: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: {
-            model: 'graduates',
-            key: 'id',
-        },
+    },
+    employerId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
     },
     jobType: {
         type: DataTypes.STRING(50),
@@ -40,22 +40,6 @@ const JobHistory = sequelize.define('job_history', {
         type: DataTypes.BOOLEAN,
         allowNull: true,
     },
-    organizationName: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
-    },
-    okved: {
-        type: DataTypes.STRING(50),
-        allowNull: true,
-    },
-    inn: {
-        type: DataTypes.STRING(20),
-        allowNull: true,
-    },
-    registrationRegion: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
-    },
     position: {
         type: DataTypes.STRING(255),
         allowNull: true,
@@ -68,7 +52,7 @@ const JobHistory = sequelize.define('job_history', {
         type: DataTypes.STRING(255),
         allowNull: true,
     },
-},{
+}, {
     tableName: 'job_history' // добавьте это поле, указывающее имя таблицы
 });
 
@@ -129,16 +113,12 @@ const Graduate = sequelize.define('graduates', {
         allowNull: true,
     },
     snils: {
-        type: DataTypes.STRING(20),
+        type: DataTypes.BIGINT,
         allowNull: true,
     },
     trainingDirectionId: {
         type: DataTypes.INTEGER,
         allowNull: true,
-        references: {
-            model: 'training_direction',
-            key: 'id',
-        },
     },
     profile: {
         type: DataTypes.STRING(255),
@@ -152,6 +132,36 @@ const Graduate = sequelize.define('graduates', {
         type: DataTypes.INTEGER,
         allowNull: true,
     },
+}, {
+    tableName: 'graduates' // добавьте это поле, указывающее имя таблицы
+});
+
+// Определение модели для таблицы "employers"
+const Employer = sequelize.define('employers', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+    },
+    name: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+    },
+    okved: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
+    inn: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
+    regionname: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+    },
+}, {
+    tableName: 'employers' // добавьте это поле, указывающее имя таблицы
 });
 
 // Определение модели для таблицы "roles"
@@ -166,6 +176,8 @@ const Role = sequelize.define('roles', {
         type: DataTypes.STRING(50),
         allowNull: false,
     },
+}, {
+    tableName: 'roles' // добавьте это поле, указывающее имя таблицы
 });
 
 // Определение модели для таблицы "users"
@@ -192,6 +204,8 @@ const User = sequelize.define('users', {
         type: DataTypes.STRING(6), // Длина кода сброса пароля
         allowNull: true,
     },
+}, {
+    tableName: 'users' // добавьте это поле, указывающее имя таблицы
 });
 
 // Определение модели для таблицы "user_roles"
@@ -200,40 +214,28 @@ const UserRole = sequelize.define('user_roles', {
         type: DataTypes.INTEGER,
         primaryKey: true,
         allowNull: false,
-        references: {
-            model: 'users',
-            key: 'id',
-        },
     },
     roleId: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         allowNull: false,
-        references: {
-            model: 'roles',
-            key: 'id',
-        },
     },
+}, {
+    tableName: 'user_roles' // добавьте это поле, указывающее имя таблицы
 });
 
 // Установка связей между моделями
 Graduate.hasMany(JobHistory, { foreignKey: 'graduateId' });
 JobHistory.belongsTo(Graduate, { foreignKey: 'graduateId' });
 
+JobHistory.belongsTo(Employer, { foreignKey: 'employerId' });
+Employer.hasMany(JobHistory, { foreignKey: 'employerId' });
+
 Graduate.belongsTo(TrainingDirection, { foreignKey: 'trainingDirectionId' });
 TrainingDirection.hasMany(Graduate, { foreignKey: 'trainingDirectionId' });
 
 User.belongsToMany(Role, { through: UserRole, foreignKey: 'userId' });
 Role.belongsToMany(User, { through: UserRole, foreignKey: 'roleId' });
-
-/*// Синхронизация моделей с базой данных
-sequelize.sync()
-    .then(() => {
-        console.log('Модели синхронизированы с базой данных.');
-    })
-    .catch((error) => {
-        console.error('Ошибка при синхронизации моделей:', error);
-    });*/
 
 module.exports = {
     JobHistory,
@@ -242,4 +244,6 @@ module.exports = {
     User,
     UserRole,
     TrainingDirection,
+    Employer,
+    sequelize
 };

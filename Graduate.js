@@ -1,13 +1,13 @@
-const {Graduate,TrainingDirection,JobHistory} = require('./model');
+const {Graduate,TrainingDirection,JobHistory, Employer} = require('./model');
 
 // Функция создания нового выпускника
 async function createGraduate(request, response) {
     try {
         // Проверка на пустоту значения fullName
-        if (!graduateData.fullName) {
-            response.status(400).json({ error: 'Необходимо указать полное имя выпускника' });
-            return;
-        }
+        // if (!graduateData.fullName) {
+        //     response.status(400).json({ error: 'Необходимо указать полное имя выпускника' });
+        //     return;
+        // }
         const graduate = await Graduate.create(request.body);
         response.json(graduate);
     } catch (error) {
@@ -41,14 +41,32 @@ async function getAllGraduates(request, response) {
                     },
                     {
                         model: JobHistory,
-                        attributes: ['id', 'jobType', 'startDate', 'endDate', 'employmentBook', 'organizationName', 'okved', 'inn', 'registrationRegion', 'position', 'selfEmploymentActivity', 'militaryServiceLocation'],
+                        attributes: ['id', 'jobType', 'startDate', 'endDate', 'employmentBook', 'position', 'selfEmploymentActivity', 'militaryServiceLocation'],
+                        include:[Employer]
                     },
+
                 ],
                 attributes: { exclude: ['trainingDirectionId'] },
             });
         } else if (passedPermissions.includes(permission[1])) {
             // Проверка разрешения 'ViewGraduateDetails'
-            graduates = await Graduate.findAll({ offset, limit: 100 });
+            graduates = await Graduate.findAll({
+                offset,
+                limit: 100,
+                include: [
+                    {
+                        model: TrainingDirection,
+                        attributes: ['id', 'code', 'name'],
+                    },
+                    {
+                        model: JobHistory,
+                        attributes: ['id', 'jobType', 'startDate', 'endDate', 'employmentBook', 'position', 'selfEmploymentActivity', 'militaryServiceLocation'],
+                        include:[Employer]
+                    },
+
+                ],
+                attributes: { exclude: ['trainingDirectionId'] },
+            });
         } else if (passedPermissions.includes(permission[0])) {
             // Проверка разрешения 'ViewGraduates'
             graduates = await Graduate.findAll({ attributes: { exclude: ['email', 'phone', 'snils', 'address'] }, offset, limit: 100 });
@@ -73,13 +91,52 @@ async function getGraduateById(request, response) {
 
         if (passedPermissions.includes(permission[2])) {
             // Проверка разрешения 'ManageGraduates'
-            graduate = await Graduate.findByPk(request.params.id);
+            graduate = await Graduate.findByPk(request.params.id, {
+                limit: 100,
+                include: [
+                    {
+                        model: TrainingDirection,
+                        attributes: ['id', 'code', 'name'],
+                    },
+                    {
+                        model: JobHistory,
+                        attributes: ['id', 'jobType', 'startDate', 'endDate', 'employmentBook', 'position', 'selfEmploymentActivity', 'militaryServiceLocation'],
+                        include:[Employer]
+                    },
+
+                ],
+                attributes: { exclude: ['trainingDirectionId'] },
+            });
         } else if (passedPermissions.includes(permission[1])) {
             // Проверка разрешения 'ViewGraduateDetails'
-            graduate = await Graduate.findByPk(request.params.id);
+            graduate = await Graduate.findByPk(request.params.id, {
+                limit: 100,
+                include: [
+                    {
+                        model: TrainingDirection,
+                        attributes: ['id', 'code', 'name'],
+                    },
+                    {
+                        model: JobHistory,
+                        attributes: ['id', 'jobType', 'startDate', 'endDate', 'employmentBook', 'position', 'selfEmploymentActivity', 'militaryServiceLocation'],
+                        include:[Employer]
+                    },
+
+                ],
+                attributes: { exclude: ['trainingDirectionId'] },
+            });
         } else if (passedPermissions.includes(permission[0])) {
             // Проверка разрешения 'ViewGraduates'
-            graduate = await Graduate.findByPk(request.params.id, { attributes: { exclude: ['email', 'phone', 'snils', 'address'] } });
+            graduate = await Graduate.findByPk(request.params.id, {
+                attributes: { exclude: ['email', 'phone', 'snils', 'address'] },
+                include: [
+                    {
+                        model: JobHistory,
+                        attributes: ['id', 'jobType', 'startDate', 'endDate', 'employmentBook', 'position', 'selfEmploymentActivity', 'militaryServiceLocation'],
+                        include: [Employer], // Включение связанной модели Employer
+                    },
+                ],
+            });
         } else {
             response.status(403).json({ error: 'У вас нет разрешения на доступ к выпускнику' });
             return;
@@ -95,6 +152,7 @@ async function getGraduateById(request, response) {
         response.status(500).json({ error: 'Ошибка при получении выпускника' });
     }
 }
+
 
 
 

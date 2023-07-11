@@ -52,6 +52,9 @@ module.exports = {
             },
             {
                 roleName: 'ManageJobHistory'
+            },
+            {
+                roleName: 'ManageEmployers'
             }
         ];
 
@@ -152,7 +155,7 @@ module.exports = {
                 allowNull: true,
             },
             snils: {
-                type: Sequelize.STRING(20),
+                type: Sequelize.BIGINT(20),
                 allowNull: true,
             },
             trainingDirectionId: {
@@ -187,6 +190,41 @@ module.exports = {
             },
         });
 
+        await queryInterface.createTable('employers', {
+            id: {
+                type: Sequelize.INTEGER,
+                primaryKey: true,
+                autoIncrement: true,
+                allowNull: false,
+            },
+            name: {
+                type: Sequelize.STRING(255),
+                allowNull: false,
+            },
+            okved: {
+                type: Sequelize.INTEGER,
+                allowNull: true,
+            },
+            inn: {
+                type: Sequelize.INTEGER,
+                allowNull: true,
+            },
+            regionname: {
+                type: Sequelize.STRING(255),
+                allowNull: true,
+            },
+            createdAt: {
+                type: Sequelize.DATE,
+                allowNull: false,
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+            },
+            updatedAt: {
+                type: Sequelize.DATE,
+                allowNull: false,
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+            },
+        });
+
         await queryInterface.createTable('job_history', {
             id: {
                 type: Sequelize.INTEGER,
@@ -199,6 +237,14 @@ module.exports = {
                 allowNull: false,
                 references: {
                     model: 'graduates',
+                    key: 'id',
+                },
+            },
+            employerId: {
+                type: Sequelize.INTEGER,
+                allowNull: true,
+                references: {
+                    model: 'employers',
                     key: 'id',
                 },
             },
@@ -217,22 +263,6 @@ module.exports = {
             },
             employmentBook: {
                 type: Sequelize.BOOLEAN,
-                allowNull: true,
-            },
-            organizationName: {
-                type: Sequelize.STRING(255),
-                allowNull: true,
-            },
-            okved: {
-                type: Sequelize.STRING(50),
-                allowNull: true,
-            },
-            inn: {
-                type: Sequelize.STRING(20),
-                allowNull: true,
-            },
-            registrationRegion: {
-                type: Sequelize.STRING(255),
                 allowNull: true,
             },
             position: {
@@ -294,6 +324,7 @@ module.exports = {
         await queryInterface.dropTable('user_roles');
         await queryInterface.dropTable('job_history');
         await queryInterface.dropTable('graduates');
+        await queryInterface.dropTable('employers');
         await queryInterface.dropTable('training_direction');
         await queryInterface.dropTable('users');
         await queryInterface.dropTable('roles');

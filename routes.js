@@ -36,6 +36,13 @@ const {
     deleteJobHistory
 }=require("./JobHistory")
 
+const {
+    createEmployer,
+    getEmployer,
+    getEmployers,
+    updateEmployer,
+    deleteEmployer
+}=require('./employer')
 const routes = express.Router();
 
 
@@ -71,6 +78,13 @@ routes.get("/job", verifyToken, checkPermission([permission.ManageJobHistory,per
 routes.get("/job/:id", verifyToken, checkPermission([permission.ManageJobHistory,permission.ManageGraduates,permission.ViewGraduateDetails]), getJobHistoryById);
 routes.put("/job/:id", verifyToken, checkPermission([permission.ManageJobHistory]), updateJobHistory);
 routes.delete("/job/:id", verifyToken, checkPermission([permission.ManageJobHistory]), deleteJobHistory);
+
+// Работодатели
+routes.post("/employer", verifyToken, checkPermission([permission.ManageEmployers]), createEmployer);
+routes.get("/employer/:id", verifyToken, checkPermission([permission.ManageEmployers, permission.ManageGraduates,permission.ViewGraduateDetails]), getEmployer);
+routes.get("/employer/", verifyToken, checkPermission([permission.ManageEmployers, permission.ManageGraduates,permission.ViewGraduateDetails]), getEmployers);
+routes.put("/employer/:id", verifyToken, checkPermission([permission.ManageEmployers]), updateEmployer);
+routes.delete("/employer/:id", verifyToken, checkPermission([permission.ManageEmployers]), deleteEmployer);
 
 // export and import
 routes.get("/graduate/:id/export",verifyToken,checkPermission([permission.ExportToPDF]),exportPdf)

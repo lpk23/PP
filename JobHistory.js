@@ -1,4 +1,4 @@
-const { JobHistory: JobHistory } = require('./model');
+const { JobHistory } = require('./model');
 
 // Функция создания записи о рабочем опыте
 async function createJobHistory(request, response) {
