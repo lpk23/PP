@@ -1,8 +1,9 @@
-const { exportStudentInfoToPDF ,importCSV} = require("./Helpers");
+const { exportStudentInfoToPDF} = require("./Helpers");
 const {Graduate,TrainingDirection}=require('./model')
 const {parse} = require('csv-parse');
 
 const fs = require('fs');
+const {BIGINT} = require("sequelize");
 
 async function exportPdf(req, res) {
     const graduateId = req.params.id;
@@ -56,6 +57,7 @@ async function importFile(req, res) {
         const headers = records[0];
         const newGraduates = [];
         const existingGraduates = [];
+        const failedImports = []; // Список неудачных импортов
 
         for (let i = 1; i < records.length; i++) {
             const row = records[i];
@@ -70,6 +72,13 @@ async function importFile(req, res) {
             const snils = graduate.snils;
 
             if (snils) {
+                // Проверка, что СНИЛС состоит только из цифр
+                if (!/^\d+$/.test(snils)) {
+                    failedImports.push(snils)
+                    console.log(`Значение СНИЛС ${snils} содержит недопустимые символы. Пропускаю импорт выпускника.`);
+                    continue;
+                }
+
                 // Проверка существования записи по snils
                 const existingGraduate = await Graduate.findOne({
                     where: { snils: snils },
@@ -81,22 +90,27 @@ async function importFile(req, res) {
                     continue; // Пропускаем импорт, если запись уже существует
                 }
 
-                // Поиск или создание TrainingDirection
-                const [trainingDirection, created] = await TrainingDirection.findOrCreate({
-                    where: {
-                        code: graduate.trainingDirectionCode,
-                        name: graduate.trainingDirectionName,
-                    },
-                });
+                try {
+                    // Поиск или создание TrainingDirection
+                    const [trainingDirection, created] = await TrainingDirection.findOrCreate({
+                        where: {
+                            code: graduate.trainingDirectionCode,
+                            name: graduate.trainingDirectionName,
+                        },
+                    });
 
-                // Создание выпускника в базе данных
-                const createdGraduate = await Graduate.create({
-                    ...graduate,
-                    trainingDirectionId: trainingDirection.id,
-                });
+                    // Создание выпускника в базе данных
+                    const createdGraduate = await Graduate.create({
+                        ...graduate,
+                        trainingDirectionId: trainingDirection.id,
+                    });
 
-                newGraduates.push(snils);
-                console.log('Создан выпускник:', createdGraduate.toJSON());
+                    newGraduates.push(snils);
+                    console.log('Создан выпускник:', createdGraduate.toJSON());
+                } catch (error) {
+                    failedImports.push(snils); // Добавление СНИЛСа в список неудачных импортов
+                    console.error('Ошибка при импорте выпускника:', error);
+                }
             } else {
                 console.log('Значение СНИЛС не определено. Пропускаю импорт выпускника.');
             }
@@ -104,13 +118,16 @@ async function importFile(req, res) {
 
         console.log('Импорт данных завершен');
 
-        // Отправка успешного ответа с списком новых и существующих выпускников
-        res.json({ message: 'Импорт успешно выполнен', newGraduates, existingGraduates });
+        // Отправка успешного ответа с списком новых, существующих и неудачных импортов
+        fs.unlinkSync(filePath);
+        res.json({ message: 'Импорт успешно выполнен', newGraduates, existingGraduates, failedImports });
     } catch (error) {
         console.error('Ошибка при импорте:', error);
         res.status(500).json({ error: 'Ошибка при импорте' });
     }
 }
+
+
 
 
 module.exports = {

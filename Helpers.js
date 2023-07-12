@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { User, Role, UserRole, Graduate, JobHistory,TrainingDirection} = require('./model');
+const { User, Role, UserRole, Graduate, JobHistory,TrainingDirection, Employer} = require('./model');
 require('dotenv').config();
 const puppeteer = require('puppeteer');
 const fs = require('fs');
@@ -98,10 +98,6 @@ async function exportStudentInfoToPDF(studentId, filePath) {
                     model: TrainingDirection,
                     attributes: ['id', 'code', 'name'],
                 },
-                // {
-                //     model: JobHistory,
-                //     attributes: ['id', 'jobType', 'startDate', 'endDate', 'employmentBook', 'organizationName', 'okved', 'inn', 'registrationRegion', 'position', 'selfEmploymentActivity', 'militaryServiceLocation'],
-                //     order: [['startDate', 'ASC']],},
             ],
             attributes: { exclude: ['trainingDirectionId'] },
         });
@@ -128,7 +124,8 @@ async function exportStudentInfoToPDF(studentId, filePath) {
         let jobHistoriesHtml = '';
         const job = await JobHistory.findAll({
             where: { graduateId: studentId },
-            order: [['startDate', 'ASC']]
+            order: [['startDate', 'ASC']],
+            include:[Employer]
         });
 
 
@@ -141,7 +138,7 @@ async function exportStudentInfoToPDF(studentId, filePath) {
             }
             if (jobHistory.jobType === 'работающий') {
                 jobHistoryHtml = `
-                    <li>${formatDate(jobHistory.startDate)} Трудоустройство в ${jobHistory.organizationName}, должность ${jobHistory.position}</li>
+                    <li>${formatDate(jobHistory.startDate)} Трудоустройство в ${jobHistory.employer.name}, должность ${jobHistory.position}</li>
                 `;
             }
             if (jobHistory.jobType === 'безработный') {
@@ -182,62 +179,6 @@ function formatDate(date) {
     return new Date(date).toLocaleDateString('ru-RU');
 }
 
-async function importCSV(filePath) {
-    try {
-        // Чтение CSV файла и импорт данных
-        const csvData = fs.readFileSync(filePath, 'utf-8');
-        const rows = csvData.split('\n');
-        const headers = rows[0].split(';');
-
-        for (let i = 1; i < rows.length; i++) {
-            const row = rows[i].split(';');
-            const graduate = {};
-
-            for (let j = 0; j < headers.length; j++) {
-                const header = headers[j].trim();
-                const value = row[j] ? row[j].trim() : '';
-                graduate[header] = value;
-            }
-
-            const snils = graduate.snils;
-
-            if (snils) {
-                // Проверка существования записи по snils
-                const existingGraduate = await Graduate.findOne({
-                    where: { snils: snils },
-                });
-
-                if (existingGraduate) {
-                    console.log(`Запись выпускника с SNILS ${snils} уже существует в базе данных. Пропускаю импорт.`);
-                    continue; // Пропускаем импорт, если запись уже существует
-                }
-
-                // Поиск или создание TrainingDirection
-                const [trainingDirection, created] = await TrainingDirection.findOrCreate({
-                    where: {
-                        code: graduate.trainingDirectionCode,
-                        name: graduate.trainingDirectionName,
-                    },
-                });
-
-                // Создание выпускника в базе данных
-                const createdGraduate = await Graduate.create({
-                    ...graduate,
-                    trainingDirectionId: trainingDirection.id,
-                });
-
-                console.log('Создан выпускник:', createdGraduate.toJSON());
-            } else {
-                console.log('Значение СНИЛС не определено. Пропускаю импорт выпускника.');
-            }
-        }
-
-        console.log('Импорт данных завершен');
-    } catch (error) {
-        console.error('Ошибка при импорте данных:', error);
-    }
-}
-
 const permission = {
     ViewGraduates: 'ViewGraduates',
     ViewGraduateDetails: 'ViewGraduateDetails',
@@ -258,6 +199,5 @@ module.exports = {
     generateResetCode,
     checkPermission,
     permission,
-    exportStudentInfoToPDF,
-    importCSV
+    exportStudentInfoToPDF
 };
