@@ -19,6 +19,15 @@ app.get("/reg",function(request, response){
 app.get("/reset",function(request, response){
     response.sendFile(page+"reset.html");
 });
+app.get("/employers",function (request, response){
+    response.sendFile(page+'employers.html')
+});
+app.get("/employer/:id",function (request, response){
+    response.sendFile(page+'employers.html')
+});
+app.get("/students",function (request, response){
+    response.sendFile(page+'students.html')
+});
 
 app.use(express.static(__dirname + '/page'));
 // Запуск сервера на порту 3000

@@ -3,11 +3,6 @@ const {Graduate,TrainingDirection,JobHistory, Employer} = require('./model');
 // Функция создания нового выпускника
 async function createGraduate(request, response) {
     try {
-        // Проверка на пустоту значения fullName
-        // if (!graduateData.fullName) {
-        //     response.status(400).json({ error: 'Необходимо указать полное имя выпускника' });
-        //     return;
-        // }
         const graduate = await Graduate.create(request.body);
         response.json(graduate);
     } catch (error) {
@@ -175,8 +170,10 @@ async function updateGraduateById(request, response) {
 
 async function deleteGraduateById(request, response) {
     try {
-            const graduate = await Graduate.findByPk(request.params.id);
+        const graduateId = request.params.id;
+            const graduate = await Graduate.findByPk(graduateId);
             if (graduate) {
+                await JobHistory.destroy({ where: { graduateId } });
                 await graduate.destroy();
                 return response.json(graduate);
             } else {

@@ -93,3 +93,4 @@ routes.post("/import",verifyToken,checkPermission([permission.ImportData]),fileU
 
 module.exports = routes;
 
+// TODO: Упразнить права

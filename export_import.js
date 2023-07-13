@@ -1,9 +1,7 @@
 const { exportStudentInfoToPDF} = require("./Helpers");
 const {Graduate,TrainingDirection}=require('./model')
 const {parse} = require('csv-parse');
-
 const fs = require('fs');
-const {BIGINT} = require("sequelize");
 
 async function exportPdf(req, res) {
     const graduateId = req.params.id;
