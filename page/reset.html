@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+<meta name="Description" content="Страница восстановление пароля системы учёта выпускников">
+<meta name="Keywords" content="Восстановление пароля">
+<meta charset="utf-8">
+<title>Восстановить пароль</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script src="js/reset.js"></script>
+</head>
+	<header class="header">
+		<div class="logo">
+		<img src="img/logo.svg" width="315" height="67" alt=""/>
+	</div>
+	</header>
+<body>
+<div id="notificationBar" class="notification-bar">
+	<span id="notificationMessage" class="notification-message"></span>
+</div>
+<div class="login">
+  <div class="login-header">
+	  <h1><center>Восстановление пароля</center></h1>
+  </div>
+	<br>
+  <div class="login-form"> <center>
+	  <div id="step1">
+		  <h3>Введите Email:</h3>
+		  <br>
+		  <input type="text" id="email" placeholder="email"/><br>
+		  <br>
+		  <br>
+		  <button id="resetButton" class="login-button">Восстановить</button>
+	  </div>
+	  <div id="step2" hidden>
+		  <h3>Введите код:</h3>
+		  <br>
+		  <input type="text" id="code" placeholder="code"/><br>
+		  <br>
+		  <br>
+		  <button id="resetcodeButton" class="login-button">Отправить</button>
+	  </div>
+	  <div id="step3" hidden>
+		  <h3>Введите новый пароль:</h3>
+		  <br>
+		  <input type="password" id="password" placeholder="password"/><br>
+		  <br>
+		  <br>
+		  <button id="resetpasswordButton" class="login-button">Изменить</button>
+	  </div>
+    <br>
+	  <br>
+	  </center>
+  </div>
+	<footer class="footer">
+		<div class="container">
+			<div class="column1">
+				<div class="footer_logo">
+					<center>
+				<img src="img/footer_logo.svg" style="width: 150px">
+					</center>
+				</div>
+			</div>
+		</div>
+		<div class="container">
+			<div class="row">
+			<div class="">
+				<span class="copyright">© 1993 - 2023, ВИВТ - АНОО ВО.</span>
+			</div>
+				<br>
+			<div class="">
+				<a href="mailto:office@vivt.ru" class="footer_prismo">Хотите написать письмо ректору? Зачем? Ну ладно, пишите, если хотите.</a>
+			</div>
+				<br>
+			<div class="">
+				<span class="footer_href">При копировании материалов, ссылка на сайт vivt.ru... ой, а что, копирование уже произошло? Упс...</span>
+				</div>
+				
+				<div class="">
+					<span class="footer_href">Разыскивются печеньки!</span>
+				</div>
+			</div>
+		</div>
+	</footer>
+</div>
+</body>
+</html>

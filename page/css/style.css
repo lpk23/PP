@@ -1,0 +1,144 @@
+@charset "utf-8";
+*{
+	margin: 0;
+	padding: 0;
+}
+html, body {
+	height: 100%;
+}
+.wrapper {
+	position: relative;
+	min-height: 100%;
+}
+.content{
+	padding-bottom: 90px;
+}
+.header{
+	background: #fff;
+}
+.login-header{
+
+	font-family: sans-serif;
+}
+.login-form{
+	
+	font-family: sans-serif;
+}
+.p_text{
+	
+}
+.login-button{
+	width: 179px;
+    color: #fff;
+	background: #406d99;
+	
+	display: inline-block;
+	
+	position: relative;
+	
+	font-size: 20px;
+	letter-spacing: 3px;
+	font-weight: 700;
+	text-decoration: none;
+	
+	border: 2px solid #000000;
+}
+.sign-up {
+	text-decoration: none;
+	color: #000000;
+	font-weight: 400;
+}
+
+.no-access {
+	text-decoration: none;
+	font-weight: 400;
+	color: #000000
+}
+
+.footer {
+	background: #406d99;
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	height: auto;
+	font-family: sans-serif;
+	color: #fff;
+	margin-top: 15px;
+}
+.footer_prismo {
+	text-decoration: underline;
+	color: #fff;
+	margin-top:15px;
+	padding-left: 15px;
+}
+.footer_logo {
+	
+}
+.copyright, .footer_href{
+	margin-left: 15px;
+}.login-button
+{
+cursor: pointer;	
+}
+.notification-bar {
+	position: fixed;
+	top: 0;
+	right: 0;
+	width: auto;
+	padding: 10px;
+	background-color: #ff0000; /* Красный цвет плашки */
+	color: #fff;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+	z-index: 9999;
+}
+
+.signup-button{
+	width: 268px;
+	color: #fff;
+	background: #406d99;
+
+	display: inline-block;
+
+	position: relative;
+
+	font-size: 20px;
+	letter-spacing: 3px;
+	font-weight: 700;
+	text-decoration: none;
+
+	border: 2px solid #000000;
+}
+
+.shake {
+	animation: shake 0.5s linear; /* Анимация дерганья */
+}
+
+@keyframes shake {
+	0% { transform: translateX(0); }
+	25% { transform: translateX(5px); }
+	50% { transform: translateX(-5px); }
+	75% { transform: translateX(5px); }
+	100% { transform: translateX(0); }
+}
+
+
+
+.notification-message {
+	display: inline-block;
+	margin-right: 10px;
+	max-width: 300px; /* Задайте максимальную ширину для плашки с сообщением */
+	white-space: nowrap; /* Установите свойство white-space: nowrap, чтобы сообщение не переносилось на новую строку */
+	overflow: hidden; /* Установите свойство overflow: hidden, чтобы скрыть лишний текст в случае превышения максимальной ширины */
+	text-overflow: ellipsis; /* Установите свойство text-overflow: ellipsis, чтобы обрезать текст и добавить многоточие в конце, если он не помещается */
+}
+
+
+.close-button {
+	background: none;
+	border: none;
+	color: #999;
+	font-size: 20px;
+	cursor: pointer;
+	outline: none;
+}
