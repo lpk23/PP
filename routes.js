@@ -62,7 +62,7 @@ routes.post("/Role", verifyToken, checkPermission([permission.ManageOtherAccount
 // Выпускники
 routes.post("/graduate", verifyToken, checkPermission([permission.ManageGraduates]), createGraduate);
 routes.get("/graduate", verifyToken, checkPermission([permission.ManageGraduates, permission.ViewGraduates]), getAllGraduates);
-routes.get("/graduate/search", verifyToken, checkPermission([permission.ManageGraduates, permission.ViewGraduates]), searchGraduates);
+routes.get("/search/graduate", verifyToken, checkPermission([permission.ManageGraduates, permission.ViewGraduates]), searchGraduates);
 routes.get("/graduate/:id", verifyToken, checkPermission([permission.ManageGraduates, permission.ViewGraduates]), getGraduateById);
 routes.put("/graduate/:id", verifyToken, checkPermission([permission.ManageGraduates]), updateGraduateById);
 routes.delete("/graduate/:id", verifyToken, checkPermission([permission.ManageGraduates]), deleteGraduateById);
@@ -83,7 +83,7 @@ routes.delete("/job/:id", verifyToken, checkPermission([permission.ManageJobHist
 
 // Работодатели
 routes.post("/employer", verifyToken, checkPermission([permission.ManageEmployers]), createEmployer);
-routes.get("/employer/search", verifyToken, checkPermission([permission.ManageEmployers]), searchEmployers);
+routes.get("/search/employer", verifyToken, checkPermission([permission.ManageEmployers]), searchEmployers);
 routes.get("/employer/:id", verifyToken, checkPermission([permission.ManageEmployers, permission.ManageGraduates]), getEmployer);
 routes.get("/employer", verifyToken, checkPermission([permission.ManageEmployers, permission.ManageGraduates]), getEmployers);
 routes.put("/employer/:id", verifyToken, checkPermission([permission.ManageEmployers]), updateEmployer);

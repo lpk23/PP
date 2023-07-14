@@ -1,18 +1,21 @@
 document.addEventListener("DOMContentLoaded", function () {
     const prevButton = document.querySelector(".btn-slider-prev");
     const nextButton = document.querySelector(".btn-slider-next");
-    const searchButton = document.getElementById("searchBtn");
-
+    const searchInput = document.getElementById("searchInput");
     prevButton.addEventListener("click", function () {
         const offset = prevButton.getAttribute("data-offset");
         if (offset) {
             fetchData(offset);
         }
     });
-    searchButton.addEventListener("click", function () {
-        const searchInput = document.querySelector(".form-control").value;
-        const searchType = document.querySelector('input[name="searchtype"]:checked').id;
-        searchData(searchInput, searchType);
+    searchInput.addEventListener("input", function () {
+        const value = searchInput.value.trim();
+        const selectedType = document.querySelector('input[name="searchtype"]:checked');
+        if (value !== "") {
+            searchData(value, selectedType.id);
+        } else {
+            fetchData();
+        }
     });
 
     nextButton.addEventListener("click", function () {
@@ -106,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const myHeaders = new Headers();
         myHeaders.append("authorization", localStorage.getItem("token"));
 
-        const url = "/api/graduate/search?value=" + encodeURIComponent(searchInput) + "&attribute=" + searchType;
+        const url = "/api/search/graduate?value=" + encodeURIComponent(searchInput) + "&attribute=" + searchType;
 
         const requestOptions = {
             method: "GET",

@@ -2,12 +2,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const addButton = document.getElementById("addButton");
     const prevButton = document.querySelector(".btn-slider-prev");
     const nextButton = document.querySelector(".btn-slider-next");
-    const searchButton = document.getElementById("searchBtn");
-
-    searchButton.addEventListener("click", function () {
-        const searchInput = document.querySelector(".form-control").value;
-        const searchType = document.querySelector('input[name="searchtype"]:checked').id;
-        searchData(searchInput, searchType);
+    const searchInput = document.getElementById("searchInput");
+    searchInput.addEventListener("input", function () {
+        const value = searchInput.value.trim();
+        const selectedType = document.querySelector('input[name="searchtype"]:checked');
+        if (value !== "") {
+            searchData(value, selectedType.id);
+        } else {
+            fetchData();
+        }
     });
 
     addButton.addEventListener("click", function () {
@@ -67,6 +70,9 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("deleteConfirmButton").addEventListener("click", function () {
         const recordId = document.getElementById("deleteModalLabel").getAttribute("data-record-id");
         deleteRecord(recordId);
+        const deleteModal = document.getElementById("deleteModal");
+        const bootstrapModal = new bootstrap.Modal(deleteModal);
+        bootstrapModal.hide();
     });
 
     fetchData();
@@ -192,7 +198,45 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .catch((error) => console.log("Ошибка:", error));
     }
+    document.getElementById("saveButton").addEventListener("click", function () {
+        const recordId = document.getElementById("editModalLabel").getAttribute("data-record-id");
+        const employerName = document.getElementById("editEmployerName").value;
+        const okved = document.getElementById("editOkved").value;
+        const inn = document.getElementById("editInn").value;
+        const region = document.getElementById("editRegion").value;
 
+        const payload = {
+            name: employerName,
+            okved: okved,
+            inn: inn,
+            regionname: region,
+        };
+
+        const requestOptions = {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                authorization: localStorage.getItem("token"),
+            },
+            body: JSON.stringify(payload),
+        };
+
+        fetch("/api/employer/" + recordId, requestOptions)
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error("Ошибка при сохранении изменений в работодателе");
+                }
+            })
+            .then((data) => {
+                const editModal = document.getElementById("editModal");
+                const bootstrapModal = new bootstrap.Modal(editModal);
+                bootstrapModal.hide();
+                fetchData();
+            })
+            .catch((error) => console.log("Ошибка:", error));
+    });
     function deleteRecord(employerId) {
         const requestOptions = {
             method: "DELETE",
@@ -222,11 +266,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     function searchData(searchInput, searchType) {
+        const prevButton = document.querySelector(".btn-slider-prev");
+        const nextButton = document.querySelector(".btn-slider-next");
 
         const myHeaders = new Headers();
         myHeaders.append("authorization", localStorage.getItem("token"));
 
-        const url = "/api/employer/search?value=" + encodeURIComponent(searchInput) + "&attribute=" + searchType;
+        const url = "/api/search/employer?value=" + encodeURIComponent(searchInput) + "&attribute=" + searchType;
 
         const requestOptions = {
             method: "GET",
