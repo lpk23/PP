@@ -181,7 +181,6 @@ function formatDate(date) {
 
 const permission = {
     ViewGraduates: 'ViewGraduates',
-    ViewGraduateDetails: 'ViewGraduateDetails',
     ManageGraduates: 'ManageGraduates',
     ExportToPDF: 'ExportToPDF',
     ImportData: 'ImportData',

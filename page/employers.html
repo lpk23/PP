@@ -62,10 +62,10 @@
   <div class="Search_container my-4">
     <div class="input-group">
       <input class="form-control" type="search" placeholder="Поисковый запрос">
-      <button class="btn btn-primary" type="button">Поиск</button>
+      <button class="btn btn-primary" type="button" id="searchBtn">Поиск</button>
     </div>
     <div class="form-check form-check-inline mt-2">
-      <input class="form-check-input" type="radio" name="searchtype" id="name" value="rad1">
+      <input class="form-check-input" type="radio" name="searchtype" id="name" value="rad1" checked>
       <label class="form-check-label" for="name">По названию</label>
     </div>
     <div class="form-check form-check-inline">
@@ -73,25 +73,123 @@
       <label class="form-check-label" for="inn">По ИНН</label>
     </div>
     <div class="form-check form-check-inline">
-      <input class="form-check-input" type="radio" name="searchtype" id="region" value="rad1">
-      <label class="form-check-label" for="region">По региону регистрации</label>
+      <input class="form-check-input" type="radio" name="searchtype" id="regionname" value="rad1">
+      <label class="form-check-label" for="regionname">По региону регистрации</label>
     </div>
   </div>
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#employerModal">Добавить работодателя</button>
   <div class="J_List">
-    <table class="J_table table table-bordered">
-      <tr>
-        <td class="J_cell">Название</td>
-        <td class="J_cell">ОКВЭД</td>
-        <td class="J_cell">ИНН</td>
-        <td class="J_cell">Регион регистрации</td>
-      </tr>
-      <tr>
-        <td class="J_cell">1</td>
-        <td class="J_cell">2</td>
-        <td class="J_cell">3</td>
-        <td class="J_cell">3</td>
-      </tr>
-    </table>
+    <div class="table-slider">
+      <div class="table-slider-inner">
+        <table class="J_table table table-bordered">
+          <thead>
+          <tr>
+            <th class="J_cell">Название</th>
+            <th class="J_cell">ОКВЭД</th>
+            <th class="J_cell">ИНН</th>
+            <th class="J_cell">Регион регистрации</th>
+            <th class="J_cell">Действия</th>
+          </tr>
+          </thead>
+          <tr>
+            <td class="J_cell">1</td>
+            <td class="J_cell">2</td>
+            <td class="J_cell">3</td>
+            <td class="J_cell">3</td>
+            <td class="J_cell">
+              <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal">Редактировать</button>
+              <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal">Удалить</button>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="table-slider-controls">
+        <button class="btn btn-primary btn-slider-prev" type="button">&lt;</button>
+        <button class="btn btn-primary btn-slider-next" type="button">&gt;</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="employerModal" tabindex="-1" aria-labelledby="employerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="employerModalLabel">Добавить работодателя</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="employerForm">
+            <div class="mb-3">
+              <label for="employerName" class="form-label">Название</label>
+              <input type="text" class="form-control" id="employerName" required>
+            </div>
+            <div class="mb-3">
+              <label for="okved" class="form-label">ОКВЭД</label>
+              <input type="text" class="form-control" id="okved" required>
+            </div>
+            <div class="mb-3">
+              <label for="inn" class="form-label">ИНН</label>
+              <input type="text" class="form-control" id="inn-add" required>
+            </div>
+            <div class="mb-3">
+              <label for="region" class="form-label">Регион регистрации</label>
+              <input type="text" class="form-control" id="region-add" required>
+            </div>
+            <button type="submit" class="btn btn-primary" id="addButton">Сохранить</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editModalLabel" data-record-id="0">Редактировать работодателя #0</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editForm">
+          <div class="mb-3">
+            <label for="editEmployerName" class="form-label">Название</label>
+            <input type="text" class="form-control" id="editEmployerName" required>
+          </div>
+          <div class="mb-3">
+            <label for="editOkved" class="form-label">ОКВЭД</label>
+            <input type="text" class="form-control" id="editOkved" required>
+          </div>
+          <div class="mb-3">
+            <label for="editInn" class="form-label">ИНН</label>
+            <input type="text" class="form-control" id="editInn" required>
+          </div>
+          <div class="mb-3">
+            <label for="editRegion" class="form-label">Регион регистрации</label>
+            <input type="text" class="form-control" id="editRegion" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Сохранить</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Удалить работодателя</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Вы уверены, что хотите удалить данного работодателя и связанные с ним записи?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+        <button type="button" class="btn btn-danger" id="deleteConfirmButton">Удалить</button>
+      </div>
+    </div>
   </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>

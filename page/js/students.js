@@ -1,69 +1,131 @@
 document.addEventListener("DOMContentLoaded", function () {
-    var myHeaders = new Headers();
-    myHeaders.append("authorization", localStorage.getItem('token'));
+    const prevButton = document.querySelector(".btn-slider-prev");
+    const nextButton = document.querySelector(".btn-slider-next");
+    const searchButton = document.getElementById("searchBtn");
 
-    var requestOptions = {
-        method: 'GET',
-        headers: myHeaders,
-        redirect: 'follow'
-    };
+    prevButton.addEventListener("click", function () {
+        const offset = prevButton.getAttribute("data-offset");
+        if (offset) {
+            fetchData(offset);
+        }
+    });
+    searchButton.addEventListener("click", function () {
+        const searchInput = document.querySelector(".form-control").value;
+        const searchType = document.querySelector('input[name="searchtype"]:checked').id;
+        searchData(searchInput, searchType);
+    });
 
-    fetch("api/graduate", requestOptions)
-        .then(response => {
-            if (response.ok) {
-                return response.json(); // Parse the response as JSON
-            } else {
-                window.location.href="/";
-            }
-        })
-        .then(data => {
-            // Populate the table with the response data
-            populateTable(data);
-        })
-        .catch(error => console.log('error', error));
+    nextButton.addEventListener("click", function () {
+        const offset = nextButton.getAttribute("data-offset");
+        if (offset) {
+            fetchData(offset);
+        }
+    });
 
-});
+    fetchData();
 
-function populateTable(data) {
-    var table = document.querySelector('.S_table');
+    function fetchData(offset = null) {
+        const myHeaders = new Headers();
+        myHeaders.append("authorization", localStorage.getItem("token"));
 
-    while (table.rows.length > 1) {
-        table.deleteRow(1);
+        let url = "/api/graduate";
+        if (offset) {
+            url += "?offset=" + offset;
+        }
+
+        const requestOptions = {
+            method: "GET",
+            headers: myHeaders,
+            redirect: "follow",
+        };
+
+        fetch(url, requestOptions)
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    window.location.href = "/";
+                }
+            })
+            .then((data) => {
+                populateTable(data.graduates);
+                updatePaginationButtons(data.prev, data.next);
+            })
+            .catch((error) => console.log("Ошибка:", error));
     }
 
-    data.forEach(item => {
-        var row = table.insertRow();
+    function populateTable(data) {
+        var table = document.querySelector('.S_table');
 
-        var link = document.createElement('a');
-        link.href = '/employer/'+item.id; // Replace 'your_link_url' with the actual URL you want to use
+        while (table.rows.length > 1) {
+            table.deleteRow(1);
+        }
 
-        var cell1 = row.insertCell();
-        var cell2 = row.insertCell();
-        var cell3 = row.insertCell();
-        var cell4 = row.insertCell();
-        var cell5 = row.insertCell();
-        var cell6 = row.insertCell();
-        var cell7 = row.insertCell();
-        var cell8 = row.insertCell();
-        var cell9 = row.insertCell();
-        var cell10 = row.insertCell();
-        var cell11 = row.insertCell();
+        data.forEach(item => {
+            var row = table.insertRow();
 
-        link.textContent = item.fullName;
-        cell1.appendChild(link);
-        var dateOfBirth = new Date(item.dateOfBirth);
-        cell2.textContent = dateOfBirth.toLocaleDateString('ru');
-        cell3.textContent = item.gender;
-        cell4.textContent = item.citizenship;
-        cell5.textContent = item.phone;
-        cell6.textContent = item.email;
-        cell7.textContent = item.snils;
-        cell8.textContent = item.training_direction.code + ' ' + item.training_direction.name + ' ('+item.profile+')';
-        cell9.textContent = 0;
-        cell10.textContent = item.graduationYear;
-        cell11.textContent = item.educationForm;
-    });
-}
+            var link = document.createElement('a');
+            link.href = '/graduate/' + item.id; // Replace 'your_link_url' with the actual URL you want to use
 
+            var cell1 = row.insertCell();
+            var cell2 = row.insertCell();
+            var cell3 = row.insertCell();
+            var cell4 = row.insertCell();
+            var cell5 = row.insertCell();
+            var cell6 = row.insertCell();
 
+            link.textContent = item.fullName;
+            cell1.appendChild(link);
+            cell2.textContent = item.gender;
+            cell3.textContent = item.phone;
+            cell4.textContent = item.snils;
+            cell5.textContent = item.training_direction.code + '\n' + item.training_direction.name + '\n (' + item.profile + ')';
+            cell6.textContent = item.graduationYear;
+        });
+    }
 
+    function updatePaginationButtons(prevOffset, nextOffset) {
+        if (prevOffset !== null && prevOffset >= 0) {
+            prevButton.setAttribute("data-offset", prevOffset);
+            prevButton.removeAttribute("disabled");
+        } else {
+            prevButton.removeAttribute("data-offset");
+            prevButton.setAttribute("disabled", true);
+        }
+
+        if (nextOffset !== null && nextOffset > 0) {
+            nextButton.setAttribute("data-offset", nextOffset);
+            nextButton.removeAttribute("disabled");
+        } else {
+            nextButton.removeAttribute("data-offset");
+            nextButton.setAttribute("disabled", true);
+        }
+    }
+    function searchData(searchInput, searchType) {
+
+        const myHeaders = new Headers();
+        myHeaders.append("authorization", localStorage.getItem("token"));
+
+        const url = "/api/graduate/search?value=" + encodeURIComponent(searchInput) + "&attribute=" + searchType;
+
+        const requestOptions = {
+            method: "GET",
+            headers: myHeaders,
+            redirect: "follow",
+        };
+
+        fetch(url, requestOptions)
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error("Ошибка при выполнении поиска");
+                }
+            })
+            .then((data) => {
+                populateTable(data);
+                updatePaginationButtons(data.prev, data.next);
+            })
+            .catch((error) => console.log("Ошибка:", error));
+    }
+});

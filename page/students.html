@@ -54,10 +54,10 @@
     <div class="Search_container my-4">
         <div class="input-group">
             <input class="form-control" type="search" placeholder="Поисковый запрос">
-            <button class="btn btn-primary" type="button">Поиск</button>
+            <button class="btn btn-primary" type="button" id="searchBtn">Поиск</button>
         </div>
         <div class="form-check form-check-inline mt-2">
-            <input class="form-check-input" type="radio" name="searchtype" id="FIO" value="rad1">
+            <input class="form-check-input" type="radio" name="searchtype" id="fullName" value="rad1" checked>
             <label class="form-check-label" for="FIO">По ФИО</label>
         </div>
         <div class="form-check form-check-inline">
@@ -65,44 +65,42 @@
             <label class="form-check-label" for="snils">По СНИЛС</label>
         </div>
         <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="searchtype" id="tel" value="rad1">
+            <input class="form-check-input" type="radio" name="searchtype" id="phone" value="rad1">
             <label class="form-check-label" for="tel">По телефону</label>
         </div>
     </div>
     <div class="S_lsit_container">
         <div class="S_List">
-            <table class="table S_table table-bordered">
-                <thead>
-                <tr>
-                    <th>ФИО</th>
-                    <th>Дата рождения</th>
-                    <th>Пол</th>
-                    <th>Гражданство</th>
-                    <th>Телефон</th>
-                    <th>Электронная почта</th>
-                    <th>СНИЛС</th>
-                    <th>Код, название, профиль</th>
-                    <th>Год поступления</th>
-                    <th>Год окончания</th>
-                    <th>Форма обучения</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>2</td>
-                    <td>3</td>
-                    <td>3</td>
-                    <td>3</td>
-                    <td>3</td>
-                    <td>3</td>
-                    <td>3</td>
-                    <td>3</td>
-                    <td>3</td>
-                    <td>3</td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="table-slider">
+                <div class="table-slider-inner">
+                    <table class="table S_table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>ФИО</th>
+                            <th>Пол</th>
+                            <th>Телефон</th>
+                            <th>СНИЛС</th>
+                            <th>Код, название, профиль</th>
+                            <th>Год окончания</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>2</td>
+                            <td>3</td>
+                            <td>3</td>
+                            <td>3</td>
+                            <td>3</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-slider-controls">
+                    <button class="btn btn-primary btn-slider-prev" type="button">&lt;</button>
+                    <button class="btn btn-primary btn-slider-next" type="button">&gt;</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
