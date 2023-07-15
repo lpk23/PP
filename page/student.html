@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="Description" content="Добавление студентов в систему учёта выпускников">
+  <meta name="Keywords" content="Страница добавления студентов, добавление">
+  <meta charset="utf-8">
+  <title>Добавление студента</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="/css/footer.css">
+  <script src="/js/student.js"></script>
+</head>
+<body>
+<header>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+      <a class="navbar-brand" href="/"><img src="/img/logo.svg" class="image" alt="" style="width: 300px"></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Главная</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+               data-bs-toggle="dropdown" aria-expanded="false">
+              Студенты
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="students">Список студентов</a></li>
+              <li><a class="dropdown-item" href="student/add">Добавить студента</a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="employers">Работодатели</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="work_file">Импорт/Экспорт</a>
+          </li>
+          <li class="nav-item" id="logout-link">
+            <a class="nav-link" href="">Выход</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main class="container">
+  <h1 class="text-center mt-4">Добавление студентов</h1>
+
+  <div class="row mt-4">
+    <div class="col">
+      <h3 class="text-center">Личная информация</h3>
+      <div class="Add_fields_container mt-4">
+        <div class="row">
+          <div class="col text-center">
+            <label for="fullName" class="label">ФИО</label>
+            <input id="fullName" class="form-control mb-2" type="text" placeholder="Иванов Максим Александрович">
+            <label for="birthDate" class="label">Дата рождения</label>
+            <input id="birthDate" class="form-control mb-2" type="date" placeholder="ДД/ММ/ГГГГ">
+            <div class="selection-field">
+              <label for="gender" class="label">Пол</label>
+              <select id="gender" class="form-control mb-2">
+                <option value="">Выберите пол</option>
+                <option value="Мужской">Мужской</option>
+                <option value="Женский">Женский</option>
+              </select>
+            </div>
+            <label for="nationality" class="label">Гражданство</label>
+            <input id="nationality" class="form-control mb-2" type="text" placeholder="Российская Федерация">
+            <label class="label">Адрес проживания (по КЛАДР)</label>
+            <div class="input-group mb-2">
+              <input id="address" class="form-control" type="text" placeholder="Формат адреса">
+              <button id="kladrButton" class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#kladrModal">КЛАДР</button>
+            </div>
+            <label for="phone" class="label">Телефон (с форматом)</label>
+            <input id="phone" class="form-control mb-2" type="text" placeholder="8 800 555 35 55">
+            <label for="email" class="label">Электронная почта (с форматом)</label>
+            <input id="email" class="form-control mb-2" type="email" placeholder="example@fubar.com">
+            <label for="snils" class="label">СНИЛС (с форматом)</label>
+            <input id="snils" class="form-control mb-2" type="text" placeholder="XXX XXX XXX XX">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <h3 class="text-center">Информация об обучении</h3>
+      <div class="Add_fields_container mt-4">
+        <div class="row">
+          <div class="col text-center">
+            <div class="selection-field">
+              <label for="directionCode" class="label">Код направления подготовки</label>
+              <div class="dropdown">
+                <input id="directionCode" class="form-control mb-2 dropdown-toggle" type="text" placeholder="Формат кода" data-bs-toggle="dropdown" aria-expanded="false">
+                <ul id="directionCodeDropdown" class="dropdown-menu" aria-labelledby="directionCode">
+                </ul>
+              </div>
+            </div>
+            <label for="directionName" class="label">Название направления подготовки</label>
+            <input id="directionName" class="form-control mb-2" type="text" placeholder="Информатика и Вычислительная техника">
+            <label for="directionProfile" class="label">Профиль направления подготовки</label>
+            <input id="directionProfile" class="form-control mb-2" type="text" placeholder="Формат профиля">
+            <label for="admissionYear" class="label">Год поступления</label>
+            <input id="admissionYear" class="form-control mb-2" type="text" placeholder="ГГГГ">
+            <label for="completionYear" class="label">Год окончания</label>
+            <input id="completionYear" class="form-control mb-2" type="text" placeholder="ГГГГ">
+            <div class="selection-field">
+              <label for="studyForm" class="label">Форма обучения *</label>
+              <select id="studyForm" class="form-control mb-2">
+                <option value="">Выберите форму обучения</option>
+                <option value="Очная">Очная</option>
+                <option value="Заочная">Заочная</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col">
+      <h3 class="text-center">История работ</h3>
+      <div class="Add_fields_container mt-4">
+        <div class="row">
+          <div class="col text-center">
+            <table id="employmentHistory" class="table">
+              <thead>
+              <tr>
+                <th scope="col">Дата смены статуса</th>
+                <th scope="col">Статус</th>
+                <th scope="col">Действия</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td>30.06.21</td>
+                <td>Завершение обучения по направлению подготовки (указать)</td>
+                <td>
+                  <button class="btn btn-primary btn-edit">Редактировать</button>
+                  <button class="btn btn-danger btn-delete">Удалить</button>
+                </td>
+              </tr>
+              <tr>
+                <td>01.08.21</td>
+                <td>Безработный, поставлен на учёт</td>
+                <td>
+                  <button class="btn btn-primary btn-edit">Редактировать</button>
+                  <button class="btn btn-danger btn-delete">Удалить</button>
+                </td>
+              </tr>
+              <tr>
+                <td>01.10.21</td>
+                <td>Служба в ВС РФ, в/ч 66666, рядовой</td>
+                <td>
+                  <button class="btn btn-primary btn-edit">Редактировать</button>
+                  <button class="btn btn-danger btn-delete">Удалить</button>
+                </td>
+              </tr>
+              <tr>
+                <td>01.12.22</td>
+                <td>Трудоустройство в ООО "Рога и копыта", должность инженер</td>
+                <td>
+                  <button class="btn btn-primary btn-edit">Редактировать</button>
+                  <button class="btn btn-danger btn-delete">Удалить</button>
+                </td>
+              </tr>
+              <tr>
+                <td>02.04.23</td>
+                <td>Трудоустройство в ЗАО "Тяпки и грабли", должность - техник</td>
+                <td>
+                  <button class="btn btn-primary btn-edit">Редактировать</button>
+                  <button class="btn btn-danger btn-delete">Удалить</button>
+                </td>
+              </tr>
+              <tr>
+                <td>01.05.23</td>
+                <td>Безработный, поставлен на учёт</td>
+                <td>
+                  <button class="btn btn-primary btn-edit">Редактировать</button>
+                  <button class="btn btn-danger btn-delete">Удалить</button>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+            <div class="text-center mt-2">
+              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Добавить</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addModalLabel">Добавление записи</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Your form fields here -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+          <button type="button" class="btn btn-primary">Сохранить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col text-center">
+      <button id="saveButton" class="btn btn-primary">Сохранить</button>
+    </div>
+  </div>
+</main>
+
+<div class="modal fade" id="kladrModal" tabindex="-1" aria-labelledby="kladrModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="kladrModalLabel">Форма ввода данных по КЛАДР</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="district" class="form-label">Регион</label>
+          <input type="text" id="district" class="form-control" placeholder="Введите регион">
+          <div class="dropdown-menu" id="districtDropdown" aria-labelledby="district">
+
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="city" class="form-label">Город</label>
+          <input type="text" id="city" class="form-control" placeholder="Введите город" disabled>
+          <div class="dropdown-menu" id="cityDropdown" aria-labelledby="city">
+
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="settlement" class="form-label">Населённый пункт</label>
+          <input type="text" id="settlement" class="form-control" placeholder="Введите населённый пункт" disabled>
+          <div class="dropdown-menu" id="settlementDropdown" aria-labelledby="settlement">
+
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="street" class="form-label">Улица</label>
+          <input type="text" id="street" class="form-control" placeholder="Введите улицу" disabled>
+          <div class="dropdown-menu" id="streetDropdown" aria-labelledby="street">
+
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="house" class="form-label">Дом</label>
+          <input type="text" id="house" class="form-control" placeholder="Введите номер дома" disabled>
+          <div class="dropdown-menu" id="houseDropdown" aria-labelledby="house">
+
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button id="kladrSubmitButton" class="btn btn-primary">Применить</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+<footer class="footer mt-4">
+  <div class="container">
+    <div class="row">
+      <div class="col text-center">
+        <div class="footer_logo">
+          <img src="/img/footer_logo.svg" style="width: 150px" alt="">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col text-center">
+        <a href="mailto:office@vivt.ru" class="footer_prismo">Хотите написать письмо ректору? Зачем? Ну ладно, пишите, если хотите.</a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col text-center">
+        <span class="footer_href">При копировании материалов, ссылка на сайт vivt.ru... ой, а что, копирование уже произошло? Упс...</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col text-center">
+        <span class="footer_href">Разыскиваются печеньки!</span>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col text-center">
+        <span class="text-muted">© 1993 - 2023, ВИВТ - АНОО ВО.</span>
+      </div>
+    </div>
+  </div>
+</footer>
+</html>

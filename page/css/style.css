@@ -21,26 +21,26 @@ html, body {
 	font-family: sans-serif;
 }
 .login-form{
-	
+
 	font-family: sans-serif;
 }
 .p_text{
-	
+
 }
 .login-button{
 	width: 179px;
     color: #fff;
 	background: #406d99;
-	
+
 	display: inline-block;
-	
+
 	position: relative;
-	
+
 	font-size: 20px;
 	letter-spacing: 3px;
 	font-weight: 700;
 	text-decoration: none;
-	
+
 	border: 2px solid #000000;
 }
 .sign-up {
@@ -49,10 +49,10 @@ html, body {
 	font-weight: 400;
 }
 
+
+
 .no-access {
-	text-decoration: none;
-	font-weight: 400;
-	color: #000000
+
 }
 
 .footer {
@@ -73,13 +73,13 @@ html, body {
 	padding-left: 15px;
 }
 .footer_logo {
-	
+
 }
 .copyright, .footer_href{
 	margin-left: 15px;
 }.login-button
 {
-cursor: pointer;	
+cursor: pointer;
 }
 .notification-bar {
 	position: fixed;

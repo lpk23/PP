@@ -11,11 +11,16 @@ body {
 .footer {
     background: #406d99;
     color: #fff;
-    padding: 20px;
+    /*padding: 20px;*/
     margin-top: auto;
 }
 
 .footer_prismo {
     text-decoration: underline;
     color: #fff;
+}
+.link{
+    text-decoration: none;
+    font-weight: 400;
+    color: #000000
 }

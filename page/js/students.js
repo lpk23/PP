@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
             cell3.textContent = item.phone;
             cell4.textContent = item.snils;
             cell5.textContent = item.training_direction.code + '\n' + item.training_direction.name + '\n (' + item.profile + ')';
-            cell6.textContent = item.graduationYear;
+            cell6.textContent = item.graduationYear_end;
         });
     }
 

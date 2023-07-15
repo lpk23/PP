@@ -1,50 +1,61 @@
 <!doctype html>
 <html lang="ru">
+
 <head>
 	<meta name="Description" content="Страница авторизации системы учета выпускников">
 	<meta name="Keywords" content="Авторизация, регистрация">
 	<meta charset="utf-8">
 	<title>Страница авторизации</title>
+	<!-- Подключение Bootstrap CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="css/footer.css">
 	<script src="js/auth.js"></script>
 </head>
+
+<body>
 <header class="header">
 	<div class="logo">
-		<img src="./img/logo.svg" width="315" height="67" alt=""/>
+		<img src="./img/logo.svg" width="315" height="67" alt="" />
 	</div>
 </header>
-<body>
+
 <div id="notificationBar" class="notification-bar">
 	<span id="notificationMessage" class="notification-message"></span>
 </div>
 
-<div class="login">
-	<div class="login-header">
-		<h1><div style="text-align: center;">Авторизация</div></h1>
-	</div>
-	<br>
-	<div class="login-form">
-		<center>
-			<h3>Введите учетные данные:</h3>
-			<br>
-			<form action="/api/login" method="post">
-				<input type="text" id="email" placeholder="Email" /><br>
-				<br>
-				<input type="password" id="password" class="p_text" placeholder="Пароль" />
-			</form>
-			<br>
-			<br>
-			<button id="loginButton" class="login-button">Войти</button>
-			<br>
-			<br>
-			<a href="/reg" class="sign-up">Зарегистрироваться (а как?)</a>
-			<br>
-			<br>
-			<a href="/reset"> <h6 class="no-access">Забыли пароль?</h6> </a>
-		</center>
+<div class="container mt-5">
+	<div class="row justify-content-center">
+		<div class="col-md-6">
+			<div class="card">
+				<div class="card-header">
+					<h1 class="text-center">Авторизация</h1>
+				</div>
+				<div class="card-body">
+					<form action="/api/login" method="post">
+						<div class="mb-3">
+							<label for="email" class="form-label">Email</label>
+							<input type="text" id="email" class="form-control" placeholder="Email" />
+						</div>
+						<div class="mb-3">
+							<label for="password" class="form-label">Пароль</label>
+							<input type="password" id="password" class="form-control" placeholder="Пароль" />
+						</div>
+						<div class="text-center">
+							<button id="loginButton" class="btn btn-primary">Войти</button>
+						</div>
+					</form>
+					<div class="text-center mt-3">
+						<a href="/reg" class="link">Зарегистрироваться (а как?)</a>
+					</div>
+					<div class="text-center mt-3">
+						<a href="/reset" class="link">Забыли пароль?</a>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
-</body>
+
 <footer class="footer">
 	<div class="container">
 		<div class="row">
@@ -80,4 +91,9 @@
 		</div>
 	</div>
 </footer>
+
+<!-- Подключение Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+</body>
+
 </html>

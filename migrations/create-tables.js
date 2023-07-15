@@ -174,7 +174,11 @@ module.exports = {
                 type: Sequelize.STRING(50),
                 allowNull: true,
             },
-            graduationYear: {
+            graduationYear_start: {
+                type: Sequelize.INTEGER,
+                allowNull: true,
+            },
+            graduationYear_end: {
                 type: Sequelize.INTEGER,
                 allowNull: true,
             },

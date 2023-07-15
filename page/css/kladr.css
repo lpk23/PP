@@ -1,0 +1,37 @@
+/* Устанавливаем свой шрифт для выпадающего списка*/
+#kladr_autocomplete a,
+#kladr_autocomplete strong{
+    font-family: MuseoSansCyrl, Arial, Helvetica, sans-serif;
+    font-size: 15px;
+}
+
+#kladr_autocomplete small {
+    font-family: MuseoSansCyrl, Arial, Helvetica, sans-serif;
+    font-size: 13px;
+}
+
+/* Добавляем скругления и тень у выпадающего списка*/
+#kladr_autocomplete ul {
+    border-radius: 0 0 5px 5px;
+    border: 1px solid #ded7f9;
+    overflow: hidden;
+    background: #fff;
+    -webkit-box-shadow: 0 2px 10px 0 rgba(86, 62, 142, 0.1);
+    box-shadow: 0 2px 10px 0 rgba(86, 62, 142, 0.1);
+    z-index: 1;
+}
+
+/* Прописываем стили для тултипа с сообщением об ошибке*/
+.tooltip {
+    position: absolute;
+    top: 16px;
+    left: 360px;
+    color: #b94a48;
+    padding: 8px 10px;
+    border-radius: 5px;
+    border: 1px solid #eed3d7;
+    background-color: #f2dede;
+    opacity: 0.8;
+    font-size: 14px;
+    z-index: 100000;
+}

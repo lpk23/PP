@@ -2,6 +2,7 @@ const express = require("express");
 const { exportPdf, importFile } = require("./export_import");
 const fileUpload = require("express-fileupload");
 const { verifyToken, checkPermission, permission } = require("./Helpers");
+const {search}=require('./kladr')
 const {
     login,
     register,
@@ -93,6 +94,7 @@ routes.delete("/employer/:id", verifyToken, checkPermission([permission.ManageEm
 routes.get("/graduate/:id/export", verifyToken, checkPermission([permission.ExportToPDF]), exportPdf);
 routes.post("/import", verifyToken, checkPermission([permission.ImportData]), fileUpload(), importFile);
 
+routes.get("/kladr",verifyToken,search);
 module.exports = routes;
 
 // TODO: Упразнить права

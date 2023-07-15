@@ -128,7 +128,11 @@ const Graduate = sequelize.define('graduates', {
         type: DataTypes.STRING(50),
         allowNull: true,
     },
-    graduationYear: {
+    graduationYear_start: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
+    graduationYear_end: {
         type: DataTypes.INTEGER,
         allowNull: true,
     },
