@@ -298,4 +298,274 @@ document.addEventListener("DOMContentLoaded", function () {
         // Код для сохранения данных студента
         alert('Сохранение данных студента');
     });
+
+    // Обработчик события изменения выбранного статуса занятости
+    const employmentStatusSelect = document.getElementById('employmentStatus');
+    employmentStatusSelect.addEventListener('change', handleEmploymentStatusChange);
+
+// Функция для обработки изменения выбранного статуса занятости
+    function handleEmploymentStatusChange() {
+        const employmentFieldsDiv = document.getElementById('employmentFields');
+        employmentFieldsDiv.innerHTML = ''; // Очищаем предыдущие поля
+
+        const selectedStatus = employmentStatusSelect.value;
+
+        if (selectedStatus === 'employed') {
+            // Добавить поля для трудовой деятельности
+            employmentFieldsDiv.innerHTML = `
+      <div class="form-group">
+        <label for="workBook">Наличие трудовой книжки</label>
+        <input id="workBook" class="form-control" type="checkbox">
+      </div>
+      <div class="form-group">
+        <label for="workPlace">Место работы (полное название организации, ОКВЭД, ИНН, регион регистрации)</label>
+        <input id="workPlace" class="form-control" type="text" placeholder="Например: ООО 'Рога и копыта', 123456789, 0123456789, Москва">
+      </div>
+      <div class="form-group">
+        <label for="position">Должность</label>
+        <input id="position" class="form-control" type="text" placeholder="Должность">
+      </div>
+    `;
+        } else if (selectedStatus === 'selfEmployed') {
+            // Добавить поле для рода деятельности
+            employmentFieldsDiv.innerHTML = `
+      <div class="form-group">
+        <label for="activityType">Род деятельности</label>
+        <input id="activityType" class="form-control" type="text" placeholder="Род деятельности">
+      </div>
+    `;
+        } else if (selectedStatus === 'unemployed') {
+            // Добавить поле для даты постановки на учет
+            employmentFieldsDiv.innerHTML = `
+      <div class="form-group">
+        <label for="registrationDate">Дата постановки на учет</label>
+        <input id="registrationDate" class="form-control" type="date">
+      </div>
+    `;
+        } else if (selectedStatus === 'militaryService') {
+            // Добавить поля для службы в ВС
+            employmentFieldsDiv.innerHTML = `
+      <div class="form-group">
+        <label for="militaryLocation">Где служит</label>
+        <input id="militaryLocation" class="form-control" type="text" placeholder="Где служит">
+      </div>
+      <div class="form-group">
+        <label for="militaryPosition">Звание и должность</label>
+        <input id="militaryPosition" class="form-control" type="text" placeholder="Звание и должность">
+      </div>
+    `;
+        }
+    }
+
+// Обработчик события нажатия кнопки "Сохранить"
+    const saveRecordButton = document.getElementById('saveRecordButton');
+    saveRecordButton.addEventListener('click', handleSaveRecord);
+
+// Функция для обработки изменения выбранного статуса занятости
+    function handleEmploymentStatusChange() {
+        const employmentFieldsDiv = document.getElementById('employmentFields');
+        employmentFieldsDiv.innerHTML = ''; // Очищаем предыдущие поля
+
+        const selectedStatus = employmentStatusSelect.value;
+
+        if (selectedStatus === 'employed') {
+            // Добавить поля для работы
+            employmentFieldsDiv.innerHTML = `
+      <div class="form-group">
+        <label for="workBook">Наличие трудовой книжки</label>
+        <input id="workBook" class="form-control" type="checkbox">
+      </div>
+      <div class="form-group">
+        <label for="workPlace">Место работы</label>
+        <input id="workPlace" class="form-control" type="text" placeholder="Полное название организации">
+      </div>
+      <div class="form-group">
+        <label for="okved">ОКВЭД</label>
+        <input id="okved" class="form-control" type="text" placeholder="ОКВЭД">
+      </div>
+      <div class="form-group">
+        <label for="inn">ИНН</label>
+        <input id="inn" class="form-control" type="text" placeholder="ИНН">
+      </div>
+      <div class="form-group">
+        <label for="region">Регион регистрации</label>
+        <input id="region" class="form-control" type="text" placeholder="Регион">
+      </div>
+      <div class="form-group">
+        <label for="position">Должность</label>
+        <input id="position" class="form-control" type="text" placeholder="Должность">
+      </div>
+      <div class="form-group">
+        <label for="employmentDate">Дата трудоустройства</label>
+        <input id="employmentDate" class="form-control" type="date">
+      </div>
+    `;
+        } else if (selectedStatus === 'selfEmployed') {
+            // Добавить поле для рода деятельности
+            employmentFieldsDiv.innerHTML = `
+      <div class="form-group">
+        <label for="activityType">Род деятельности</label>
+        <input id="activityType" class="form-control" type="text" placeholder="Род деятельности">
+      </div>
+      <div class="form-group">
+        <label for="employmentDate">Дата самозанятости</label>
+        <input id="employmentDate" class="form-control" type="date">
+      </div>
+    `;
+        } else if (selectedStatus === 'unemployed') {
+            // Добавить поле для даты постановки на учет
+            employmentFieldsDiv.innerHTML = `
+      <div class="form-group">
+        <label for="registrationDate">Дата постановки на учет</label>
+        <input id="registrationDate" class="form-control" type="date">
+      </div>
+    `;
+        } else if (selectedStatus === 'militaryService') {
+            // Добавить поля для службы в ВС
+            employmentFieldsDiv.innerHTML = `
+      <div class="form-group">
+        <label for="militaryLocation">Место службы</label>
+        <input id="militaryLocation" class="form-control" type="text" placeholder="Место службы">
+      </div>
+      <div class="form-group">
+        <label for="militaryPosition">Звание и должность</label>
+        <input id="militaryPosition" class="form-control" type="text" placeholder="Звание и должность">
+      </div>
+      <div class="form-group">
+        <label for="employmentDate">Дата поступления на службу</label>
+        <input id="employmentDate" class="form-control" type="date">
+      </div>
+    `;
+        }
+    }
+
+
+// Функция для обработки нажатия кнопки "Сохранить"
+    function handleSaveRecord() {
+        // Получение значений полей в зависимости от выбранного статуса занятости
+        const selectedStatus = employmentStatusSelect.value;
+        let employmentData = {};
+
+        if (selectedStatus === 'employed') {
+            const workBookCheckbox = document.getElementById('workBook');
+            const workPlaceInput = document.getElementById('workPlace');
+            const okvedInput = document.getElementById('okved');
+            const innInput = document.getElementById('inn');
+            const regionInput = document.getElementById('region');
+            const positionInput = document.getElementById('position');
+            const employmentDateInput = document.getElementById('employmentDate');
+
+            employmentData = {
+                status: 'Трудоустройство',
+                workBook: workBookCheckbox.checked,
+                workPlace: workPlaceInput.value,
+                okved: okvedInput.value,
+                inn: innInput.value,
+                region: regionInput.value,
+                position: positionInput.value,
+                date: employmentDateInput.value
+            };
+        } else if (selectedStatus === 'selfEmployed') {
+            const activityTypeInput = document.getElementById('activityType');
+            const employmentDateInput = document.getElementById('employmentDate');
+
+            employmentData = {
+                status: 'Самозанятый',
+                activityType: activityTypeInput.value,
+                date: employmentDateInput.value
+            };
+        } else if (selectedStatus === 'unemployed') {
+            const registrationDateInput = document.getElementById('registrationDate');
+
+            employmentData = {
+                status: 'Безработный',
+                date: registrationDateInput.value
+            };
+        } else if (selectedStatus === 'militaryService') {
+            const militaryLocationInput = document.getElementById('militaryLocation');
+            const militaryPositionInput = document.getElementById('militaryPosition');
+            const employmentDateInput = document.getElementById('employmentDate');
+
+            employmentData = {
+                status: 'Служба в ВС',
+                militaryLocation: militaryLocationInput.value,
+                militaryPosition: militaryPositionInput.value,
+                date: employmentDateInput.value
+            };
+        }
+
+        // Сохранение данных во временный массив
+        employmentHistory.push(employmentData);
+
+        // Очистка полей формы
+        clearForm();
+
+        // Обновление таблицы
+        updateTable();
+    }
+
+// Функция для очистки полей формы
+    function clearForm() {
+        const employmentFieldsDiv = document.getElementById('employmentFields');
+        employmentFieldsDiv.innerHTML = '';
+    }
+
+// Функция для обновления таблицы
+    function updateTable() {
+        const employmentHistoryTable = document.getElementById('employmentHistory');
+
+        // Очистка таблицы
+        employmentHistoryTable.innerHTML = `
+    <thead>
+      <tr>
+        <th scope="col">Дата смены статуса</th>
+        <th scope="col">Статус</th>
+        <th scope="col">Действия</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  `;
+
+        const employmentHistoryBody = employmentHistoryTable.querySelector('tbody');
+
+        // Добавление записей в таблицу
+        employmentHistory.forEach((employment, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+      <td>${convertDateFormat(employment.date)}</td>
+      <td>${getEmploymentStatusText(employment)}</td>
+      <td>
+        <button class="btn btn-primary btn-edit" data-index="${index}">Редактировать</button>
+        <button class="btn btn-danger btn-delete" data-index="${index}">Удалить</button>
+      </td>
+    `;
+            employmentHistoryBody.appendChild(row);
+        });
+    }
+
+// Функция для получения текстового представления статуса занятости
+    function getEmploymentStatusText(employment) {
+        if (employment.status === 'Трудоустройство') {
+            return `Трудоустройство в ${employment.workPlace}, должность - ${employment.position}`;
+        } else if (employment.status === 'Самозанятый') {
+            return `Самозанятый, род деятельности - ${employment.activityType}`;
+        } else if (employment.status === 'Безработный') {
+            return `Безработный, поставлен на учет`;
+        } else if (employment.status === 'Служба в ВС') {
+            return `Служба в ВС, ${employment.militaryLocation}, должность - ${employment.militaryPosition}`;
+        }
+    }
+
+    function convertDateFormat(dateString) {
+        const parts = dateString.split('-');
+        const year = parts[0];
+        const month = parts[1];
+        const day = parts[2];
+
+        return `${day}.${month}.${year}`;
+    }
+// Массив для хранения истории занятости
+    const employmentHistory = [];
+
+
 });
