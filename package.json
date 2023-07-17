@@ -11,6 +11,7 @@
   "author": "Evgeni Osipov",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "csv-parse": "^5.4.0",
     "dotenv": "^16.3.1",
@@ -23,7 +24,6 @@
     "pg-hstore": "^2.3.4",
     "puppeteer": "^20.8.0",
     "sequelize": "^6.10.1",
-    "sequelize-cli": "",
-    "kladrapi-for-node": "^0.0.2"
+    "sequelize-cli": ""
   }
 }

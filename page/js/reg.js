@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("singupbtn").addEventListener("click", function (event) {
+    document.getElementById("signupbtn").addEventListener("click", function (event) {
         event.preventDefault(); // Отменить стандартное поведение кнопки
 
         // Получение значений полей ввода

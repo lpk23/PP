@@ -31,6 +31,9 @@ app.get("/students",function (request, response){
 app.get("/student/add",function (request, response){
     response.sendFile(page+'student.html')
 });
+app.get("/student/:id",function (request, response){
+    response.sendFile(page+'lk_student.html')
+});
 app.use(express.static(__dirname + '/page'));
 // Запуск сервера на порту 3000
 app.listen(3000, () => {

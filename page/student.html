@@ -7,6 +7,11 @@
   <title>Добавление студента</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="/css/footer.css">
+  <script src="/js/student_kladr.js"></script>
+  <script src="/js/student_training.js"></script>
+  <script src="/js/student_job.js"></script>
+  <script src="/js/student_main.js"></script>
+
 </head>
 <body>
 <header>
@@ -72,14 +77,14 @@
             <input id="nationality" class="form-control mb-2" type="text" placeholder="Российская Федерация">
             <label class="label">Адрес проживания (по КЛАДР)</label>
             <div class="input-group mb-2">
-              <input id="address" class="form-control" type="text" placeholder="Формат адреса">
+              <input id="address" class="form-control" type="text" placeholder="Адрес">
               <button id="kladrButton" class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#kladrModal">КЛАДР</button>
             </div>
-            <label for="phone" class="label">Телефон (с форматом)</label>
+            <label for="phone" class="label">Телефон</label>
             <input id="phone" class="form-control mb-2" type="text" placeholder="8 800 555 35 55">
-            <label for="email" class="label">Электронная почта (с форматом)</label>
+            <label for="email" class="label">Электронная почта</label>
             <input id="email" class="form-control mb-2" type="email" placeholder="example@fubar.com">
-            <label for="snils" class="label">СНИЛС (с форматом)</label>
+            <label for="snils" class="label">СНИЛС</label>
             <input id="snils" class="form-control mb-2" type="text" placeholder="XXX XXX XXX XX">
           </div>
         </div>
@@ -94,7 +99,7 @@
             <div class="selection-field">
               <label for="directionCode" class="label">Код направления подготовки</label>
               <div class="dropdown">
-                <input id="directionCode" class="form-control mb-2 dropdown-toggle" type="text" placeholder="Формат кода" data-bs-toggle="dropdown" aria-expanded="false">
+                <input id="directionCode" class="form-control mb-2 dropdown-toggle" type="text" placeholder="Код направления" data-bs-toggle="dropdown" aria-expanded="false">
                 <ul id="directionCodeDropdown" class="dropdown-menu" aria-labelledby="directionCode">
                 </ul>
               </div>
@@ -102,7 +107,7 @@
             <label for="directionName" class="label">Название направления подготовки</label>
             <input id="directionName" class="form-control mb-2" type="text" placeholder="Информатика и Вычислительная техника">
             <label for="directionProfile" class="label">Профиль направления подготовки</label>
-            <input id="directionProfile" class="form-control mb-2" type="text" placeholder="Формат профиля">
+            <input id="directionProfile" class="form-control mb-2" type="text" placeholder="Профиль">
             <label for="admissionYear" class="label">Год поступления</label>
             <input id="admissionYear" class="form-control mb-2" type="text" placeholder="ГГГГ">
             <label for="completionYear" class="label">Год окончания</label>
@@ -241,8 +246,6 @@
   </div>
 </div>
 
-
-<script src="/js/student.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 <footer class="footer mt-4">

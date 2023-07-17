@@ -1,7 +1,7 @@
-const kladrApi = require("kladrapi-for-node");
+const KladrApi = require("./kladr_api");
 
 async function search(req, res) {
-    const kladr = new kladrApi();
+    const kladr = new KladrApi();
     const { ParentType, ParentId, contentType, query, withParent, limit } = req.query;
 
     const kladrQuery = {
@@ -12,15 +12,20 @@ async function search(req, res) {
         withParent,
         limit
     };
-    kladr.getData(kladrQuery, (err, result) => {
-        if (err) {
-            console.error(err);
-            res.status(500).json({ error: 'Internal server error' });
-        } else {
-            res.json(result);
-        }
-    });
+
+    try {
+        const result = await kladr.getData(kladrQuery);
+
+        // Filter out the entry with id "Free" from the result
+        const filteredResult = result.result.filter(item => item.id !== "Free");
+
+        res.json(filteredResult);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 }
-module.exports={
+
+module.exports = {
     search
-}
+};

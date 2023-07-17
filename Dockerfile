@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:18.16.1
 WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install
@@ -13,4 +13,3 @@ ENV PGPASSWORD=admin
 
 # Wait for the PostgreSQL service to start
 CMD sleep 5 && npx sequelize-cli db:migrate && npm start
-

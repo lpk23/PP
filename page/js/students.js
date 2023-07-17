@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
             var row = table.insertRow();
 
             var link = document.createElement('a');
-            link.href = '/graduate/' + item.id; // Replace 'your_link_url' with the actual URL you want to use
+            link.href = '/student/' + item.id; // Replace 'your_link_url' with the actual URL you want to use
 
             var cell1 = row.insertCell();
             var cell2 = row.insertCell();
