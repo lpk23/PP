@@ -48,6 +48,5 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Пример использования
-    // showNotification("Привет! Это плашка с сообщением.");
     notificationBar.style.display = "none";
 });

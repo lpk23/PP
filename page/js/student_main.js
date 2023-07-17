@@ -30,9 +30,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     await sendEmploymentHistoryToServer(employmentHistory, newGraduateId.id);
                 }
             }
-
-            // Вывод данных в консоль (можно заменить этот шаг на отправку данных на сервер)
-            console.log(formData);
         } catch (error) {
             console.error('Ошибка при сохранении данных:', error);
         }

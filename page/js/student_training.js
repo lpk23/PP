@@ -40,7 +40,6 @@ document.addEventListener('click', function(event) {
     if (!isClickInsideInput && !isClickInsideDropdown) {
         directionDropdown.style.display = 'none';
     }
-    // Функция для получения данных из API
 
 });
     function fetchData(url) {
@@ -55,7 +54,6 @@ document.addEventListener('click', function(event) {
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                // Обработка данных здесь
                 return data;
             })
             .catch(error => console.log('Ошибка:', error));

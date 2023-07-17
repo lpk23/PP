@@ -132,7 +132,6 @@ function fillEmploymentHistory(jobHistories) {
             `;
         });
     } else {
-        // Display a message if there's no employment history
         const newRow = employmentHistoryTableBody.insertRow();
         newRow.innerHTML = `<td colspan="2">No employment history found.</td>`;
     }
