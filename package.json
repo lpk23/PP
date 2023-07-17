@@ -15,6 +15,7 @@
     "bcrypt": "^5.1.0",
     "csv-parse": "^5.4.0",
     "dotenv": "^16.3.1",
+    "easy-pdf-merge": "^0.2.6",
     "express": "^4.17.1",
     "express-fileupload": "^1.4.0",
     "jsonwebtoken": "^9.0.0",

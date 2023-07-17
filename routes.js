@@ -3,6 +3,7 @@ const { exportPdf, importFile } = require("./export_import");
 const fileUpload = require("express-fileupload");
 const { verifyToken, checkPermission, permission } = require("./Helpers");
 const {search}=require('./kladr')
+const {getStat}=require('./Statistica')
 const {
     login,
     register,
@@ -91,10 +92,13 @@ routes.put("/employer/:id", verifyToken, checkPermission([permission.ManageEmplo
 routes.delete("/employer/:id", verifyToken, checkPermission([permission.ManageEmployers]), deleteEmployer);
 
 // export and import
-routes.get("/graduate/:id/export", verifyToken, checkPermission([permission.ExportToPDF]), exportPdf);
+routes.post("/export", verifyToken, checkPermission([permission.ExportToPDF]), exportPdf);
 routes.post("/import", verifyToken, checkPermission([permission.ImportData]), fileUpload(), importFile);
 
 routes.get("/kladr",verifyToken,search);
 module.exports = routes;
+
+// stats
+routes.get("/stat",verifyToken,getStat);
 
 // TODO: Упразнить права

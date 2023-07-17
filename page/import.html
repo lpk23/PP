@@ -1,0 +1,224 @@
+<!doctype html>
+<html>
+<head>
+  <meta name="Description" content="Страинца импорта выпускников">
+  <meta name="Keywords" content="Импорт выпускников">
+  <meta charset="utf-8">
+  <title>Импорт выпускников</title>
+  <script src="/js/header.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="/css/footer.css">
+  <style>
+    .success {
+      background-color: lightgreen;
+    }
+    .error {
+      background-color: red;
+    }
+    .warning {
+      background-color: yellow;
+    }
+  </style>
+</head>
+<header>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+      <a class="navbar-brand" href="/"><img src="img/logo.svg" class="image" alt="" style="width: 300px"></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Главная</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+               data-bs-toggle="dropdown" aria-expanded="false">
+              Студенты
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="/students">Список студентов</a></li>
+              <li><a class="dropdown-item" href="/student/add">Добавить студента</a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/employers">Работодатели</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/import">Импорт</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/export">Экспорт</a>
+          </li>
+          <li class="nav-item" id="logout-link">
+            <a class="nav-link" href="">Выход</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
+<body>
+<div class="container mt-4">
+  <div class="import_menu">
+    <div class="import_header">
+      <h1 class="text-center" style="font-family: sans-serif">Выберите файл для имопорта:</h1>
+      <br>
+      <div class="text-center">
+        <input type="file" id="fileInput" accept=".csv">
+      </div>
+    </div>
+    <br>
+    <div class="import_table_container">
+      <h2 class="text-center">Таблица импортируемых выпускников</h2>
+      <h4 class="text-center">(При импорте в таблице красным помечаются строки, в которых обнружны ошибки,
+        <br> желтым - существующие, а зеленым - успешно импортированные)</h4>
+      <br>
+      <div class="text-center">
+        <button class="btn btn-primary" onclick="uploadFile()">Импортировать</button>
+      </div>
+      <br>
+      <table id="importTable" class="table table-bordered">
+        <tr>
+          <td class="import_cell">ФИО</td>
+          <td class="import_cell">Пол</td>
+          <td class="import_cell">Телефон</td>
+          <td class="import_cell">СНИЛС</td>
+          <td class="import_cell">Напрвление подготовки</td>
+        </tr>
+        <tr>
+          <td class="import_cell">1</td>
+          <td class="import_cell">1</td>
+          <td class="import_cell">1</td>
+          <td class="import_cell">1</td>
+          <td class="import_cell">1</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+</body>
+<footer class="footer">
+  <div class="container">
+    <div class="row">
+      <div class="col text-center">
+        <div class="footer_logo">
+          <img src="img/footer_logo.svg" style="width: 150px" alt="">
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col">
+        <a href="mailto:office@vivt.ru" class="footer_prismo">Хотите написать письмо ректору? Зачем? Ну ладно, пишите, если хотите.</a>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col">
+        <span class="footer_href">При копировании материалов, ссылка на сайт vivt.ru... ой, а что, копирование уже произошло? Упс...</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <span class="footer_href">Разыскивются печеньки!</span>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col text-center">
+        <span class="text-muted">© 1993 - 2023, ВИВТ - АНОО ВО.</span>
+      </div>
+    </div>
+  </div>
+</footer>
+<script>
+  // Function to upload a CSV file to the API
+  async function uploadFile() {
+    const fileInput = document.getElementById('fileInput');
+    const file = fileInput.files[0];
+
+    if (!file) {
+      alert("Please select a file.");
+      return;
+    }
+
+    const token = localStorage.getItem('token');
+    const formData = new FormData();
+    formData.append("csv", file, file.name);
+
+    try {
+      const data = await postFormData("/api/import", formData, token);
+      displayImportResults(data);
+    } catch (error) {
+      console.log('error', error);
+    }
+  }
+
+  // Function to perform a POST request with form data
+  async function postFormData(url, formData, token) {
+    const requestOptions = {
+      method: 'POST',
+      headers: { "Authorization": token },
+      body: formData
+    };
+
+    const response = await fetch(url, requestOptions);
+    if (!response.ok) {
+      throw new Error('Failed to upload file.');
+    }
+
+    return response.json();
+  }
+
+  // Function to display import results in a table
+  function displayImportResults(data) {
+    const importTable = document.getElementById('importTable');
+    importTable.innerHTML = `
+    <tr>
+      <th>СНИЛС</th>
+      <th>ФИО</th>
+      <th>Пол</th>
+      <th>Телефон</th>
+      <th>Направление подготовки</th>
+    </tr>
+  `;
+
+    data.existingGraduates.forEach(graduate => {
+      const row = createTableRow(graduate, 'warning');
+      importTable.appendChild(row);
+    });
+
+    data.failedImports.forEach(failed => {
+      const row = createTableRow(failed, 'error');
+      importTable.appendChild(row);
+    });
+
+    data.newGraduates.forEach(newGrad => {
+      const row = createTableRow(newGrad, 'success');
+      importTable.appendChild(row);
+    });
+  }
+
+  // Helper function to create a table row with appropriate data and color
+  function createTableRow(data, status) {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+    <td>${data.snils}</td>
+    <td>${data.fullName}</td>
+    <td>${data.gender}</td>
+    <td>${data.phone}</td>
+    <td>${data.trainingDirectionName}</td>
+  `;
+
+    row.classList.add(status);
+    return row;
+  }
+
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</html>

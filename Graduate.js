@@ -132,9 +132,14 @@ async function searchGraduates(request, response) {
     try {
         const attribute = request.query.attribute;
         const value = request.query.value;
-
+            const type=request.query.type_s;
+        if (type === 'no') {
+            query = literal(`"graduates"."${attribute}"::text = '${value}'`);
+        } else {
+            query = literal(`"graduates"."${attribute}"::text ILIKE '%${value}%'`);
+        }
         const graduates = await Graduate.findAll({
-            where: literal(`"graduates"."${attribute}"::text ILIKE '%${value}%'`),
+            where: query,
             include: [
                 {
                     model: TrainingDirection,

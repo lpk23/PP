@@ -1,0 +1,203 @@
+<html lang="ru">
+<head>
+  <meta name="Description" content="Страинца экспорта выпускников">
+  <meta name="Keywords" content="Экспорт выпускников">
+  <meta charset="utf-8">
+  <title>Экспорт выпускников</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+  <script src="/js/export.js"></script>
+  <script src="/js/header.js"></script>
+  <link rel="stylesheet" type="text/css" href="/css/footer.css">
+</head>
+<header>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+      <a class="navbar-brand" href="/"><img src="img/logo.svg" class="image" alt="" style="width: 300px"></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Главная</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+               data-bs-toggle="dropdown" aria-expanded="false">
+              Студенты
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="/students">Список студентов</a></li>
+              <li><a class="dropdown-item" href="/student/add">Добавить студента</a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/employers">Работодатели</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/import">Импорт</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/export">Экспорт</a>
+          </li>
+          <li class="nav-item" id="logout-link">
+            <a class="nav-link" href="">Выход</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
+<body>
+<div class="container mt-5">
+  <div class="import_menu">
+    <div class="import_header text-center">
+      <h1 class="font-weight-bold">Выберите студентов для экспорта:</h1>
+      <p>(Экспортируемых студентов можно выбирать как по одному, так и группируя по параметрам)</p>
+    </div>
+    <div class="import_table_container">
+      <div class="row justify-content-center mb-3">
+        <div class="col-md-6">
+          <input type="search" id="searchInput" class="form-control" placeholder="Поиск студентов">
+          <div class="dropdown-menu" id="searchDropDown" aria-labelledby="search">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="d-flex">
+            <button class="btn btn-primary me-2" id="exportID">Экспортировать выбранных</button>
+            <button class="btn btn-primary me-2">Экспортировать всех</button>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exportOptionsModal">Экспортировать по:</button>
+          </div>
+        </div>
+      </div>
+      <table class="table table-hover" id="exportTable">
+        <thead>
+        <tr>
+          <th>Экспорт</th>
+          <th>ФИО</th>
+          <th>Пол</th>
+          <th>Дата рождения</th>
+          <th>Гражданство</th>
+          <th>Телефон</th>
+          <th>СНИЛС</th>
+          <th>Направление подготовки</th>
+          <th>Год поступления</th>
+          <th>Год окончания</th>
+          <th>Форма обучения</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+<!--          <td><input type="checkbox" class="form-check-input export-checkbox"></td>-->
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="exportOptionsModal" tabindex="-1" role="dialog" aria-labelledby="exportOptionsModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exportOptionsModalLabel">Экспортировать по:</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="sort" class="form-label">Выберите параметры экспорта:</label>
+            <select class="form-select" id="sort">
+              <option value="gender">Полу</option>
+              <option value="Bitrth" disabled>Дате рождения</option>
+              <option value="Citizenship">Гражданству</option>
+              <option value="Education">Направлению</option>
+              <option value="Start_date">Году поступления</option>
+              <option value="End_date">Году окончания</option>
+              <option value="Edu_form">Форме обучения</option>
+            </select>
+          </div>
+          <div id="genderInput" class="form-group" style="display: none;">
+            <label for="genderSelect">Введите пол:</label>
+            <select class="form-select" id="genderSelect">
+              <option value="Мужской">Мужской</option>
+              <option value="Женский">Женский</option>
+            </select>
+          </div>
+          <div id="BitrthInput" class="form-group" style="display: none;">
+            <label for="birthDateFrom">От:</label>
+            <input type="date" class="form-control" id="birthDateFrom">
+            <label for="birthDateTo">До:</label>
+            <input type="date" class="form-control" id="birthDateTo">
+          </div>
+          <div id="CitizenshipInput" class="form-group" style="display: none;">
+            <label for="citizenshipField">Введите гражданство:</label>
+            <input type="text" class="form-control" id="citizenshipField" placeholder="Гражданство">
+          </div>
+          <div id="EducationInput" class="form-group" style="display: none;">
+            <label for="educationField">Введите направление обучения:</label>
+            <input type="search" id="educationField" class="form-control" placeholder="Направление обучения">
+            <div class="dropdown-menu" id="educationDropDown" aria-labelledby="educationField">
+            </div>
+          </div>
+          <div id="Start_dateInput" class="form-group" style="display: none;">
+            <label for="startYearField">Введите год поступления:</label>
+            <input type="text" class="form-control" id="startYearField" placeholder="Год поступления">
+          </div>
+          <div id="End_dateInput" class="form-group" style="display: none;">
+            <label for="endYearField">Введите год окончания:</label>
+            <input type="text" class="form-control" id="endYearField" placeholder="Год окончания">
+          </div>
+          <div id="Edu_formInput" class="form-group" style="display: none;">
+            <label for="eduFormField">Введите форму обучения:</label>
+            <input type="text" class="form-control" id="eduFormField" placeholder="Форма обучения">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+        <button type="button" class="btn btn-primary">Экспортировать</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+<footer class="footer">
+  <div class="container">
+    <div class="row">
+      <div class="col text-center">
+        <div class="footer_logo">
+          <img src="img/footer_logo.svg" style="width: 150px" alt="">
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col">
+        <a href="mailto:office@vivt.ru" class="footer_prismo">Хотите написать письмо ректору? Зачем? Ну ладно, пишите, если хотите.</a>
+      </div>
+    </div>
+    <br>
+    <div class="row">
+      <div class="col">
+        <span class="footer_href">При копировании материалов, ссылка на сайт vivt.ru... ой, а что, копирование уже произошло? Упс...</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <span class="footer_href">Разыскивются печеньки!</span>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col text-center">
+        <span class="text-muted">© 1993 - 2023, ВИВТ - АНОО ВО.</span>
+      </div>
+    </div>
+  </div>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</html>

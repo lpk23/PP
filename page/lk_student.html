@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="Description" content="Добавление студентов в систему учёта выпускников">
+    <meta name="Keywords" content="Страница добавления студентов, добавление">
+    <meta charset="utf-8">
+    <title>Добавление студента</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="/js/lk_s.js"></script>
+    <script src="/js/header.js"></script>
+    <link rel="stylesheet" href="/css/footer.css">
+    <style>
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/"><img src="/img/logo.svg" class="image" alt="" style="width: 300px"></a>
+        </div>
+    </nav>
+</header>
+
+<main class="container">
+    <h1 class="text-center mt-4">Добавление студентов</h1>
+
+    <div class="row mt-4">
+        <div class="col">
+            <h3 class="text-center">Личная информация</h3>
+            <div class="Add_fields_container mt-4">
+                <div class="row">
+                    <div class="col text-center">
+                        <label for="fullName" class="label">ФИО</label>
+                        <input id="fullName" class="form-control mb-2" type="text" readonly>
+                        <label for="birthDate" class="label">Дата рождения</label>
+                        <input id="birthDate" class="form-control mb-2" type="date" readonly>
+                        <div class="selection-field">
+                            <label for="gender" class="label">Пол</label>
+                            <select id="gender" class="form-control mb-2" readonly>
+                                <option value=""></option>
+                                <option value="Мужской">Мужской</option>
+                                <option value="Женский">Женский</option>
+                            </select>
+                        </div>
+                        <label for="nationality" class="label">Гражданство</label>
+                        <input id="nationality" class="form-control mb-2" type="text" readonly>
+                        <label class="label">Адрес проживания (по КЛАДР)</label>
+                        <input id="address" class="form-control mb-2" type="text" readonly>
+                        <label for="phone" class="label">Телефон</label>
+                        <input id="phone" class="form-control mb-2" type="text" readonly>
+                        <label for="email" class="label">Электронная почта</label>
+                        <input id="email" class="form-control mb-2" type="email" readonly>
+                        <label for="snils" class="label">СНИЛС</label>
+                        <input id="snils" class="form-control mb-2" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <h3 class="text-center">Информация об обучении</h3>
+            <div class="Add_fields_container mt-4">
+                <div class="row">
+                    <div class="col text-center">
+                        <div class="selection-field">
+                            <label for="directionCode" class="label">Код направления подготовки</label>
+                            <input id="directionCode" class="form-control mb-2 dropdown-toggle" type="text" data-bs-toggle="dropdown" aria-expanded="false" readonly>
+                            <ul id="directionCodeDropdown" class="dropdown-menu" aria-labelledby="directionCode">
+                            </ul>
+                        </div>
+                        <label for="directionName" class="label">Название направления подготовки</label>
+                        <input id="directionName" class="form-control mb-2" type="text" readonly>
+                        <label for="directionProfile" class="label">Профиль направления подготовки</label>
+                        <input id="directionProfile" class="form-control mb-2" type="text" readonly>
+                        <label for="admissionYear" class="label">Год поступления</label>
+                        <input id="admissionYear" class="form-control mb-2" type="text" readonly>
+                        <label for="completionYear" class="label">Год окончания</label>
+                        <input id="completionYear" class="form-control mb-2" type="text" readonly>
+                        <div class="selection-field">
+                            <label for="studyForm" class="label">Форма обучения</label>
+                            <input id="studyForm" class="form-control mb-2" type="text" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <h3 class="text-center">История работ</h3>
+        <div class="Add_fields_container mt-4">
+            <div class="row">
+                <div class="col text-center">
+                    <table id="employmentHistory" class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Дата смены статуса</th>
+                            <th scope="col">Информация</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</main>
+<button class="btn delete-btn" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal">Удалить</button>
+<button class="btn btn-secondary" disabled>Редактировать</button>
+<button class="btn btn-secondary" id="exportStudent">Экспортировать</button>
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmationModalLabel">Подтверждение удаления</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                Вы уверены, что хотите удалить запись о студенте?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn delete-btn" id="confirmDeleteButton">Удалить</button>
+            </div>
+        </div>
+    </div>
+</div>
+<footer class="footer mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col text-center">
+                <div class="footer_logo">
+                    <img src="/img/footer_logo.svg" style="width: 150px" alt="">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                <a href="mailto:office@vivt.ru" class="footer_prismo">Хотите написать письмо ректору? Зачем? Ну ладно, пишите, если хотите.</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                <span class="footer_href">При копировании материалов, ссылка на сайт vivt.ru... ой, а что, копирование уже произошло? Упс...</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                <span class="footer_href">Разыскиваются печеньки!</span>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col text-center">
+                <span class="text-muted">© 1993 - 2021 ФГБОУ ВО Вятский государственный университет, все права защищены</span>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

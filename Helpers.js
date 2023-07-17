@@ -103,14 +103,14 @@ async function exportStudentInfoToPDF(studentId, filePath) {
         });
 
         if (!student) {
-            response.status(500).json({ error: 'Ошибка' });
-            return;
+            throw new Error('Студент не найден');
         }
 
         const templatePath = './template.html';
         const template = await fs.promises.readFile(templatePath, 'utf8');
 
-        const compiledTemplate = template.replace('{{fullName}}', student.fullName)
+        const compiledTemplate = template
+            .replace('{{fullName}}', student.fullName)
             .replace('{{dateOfBirth}}', formatDate(student.dateOfBirth))
             .replace('{{gender}}', student.gender)
             .replace('{{citizenship}}', student.citizenship)
@@ -118,40 +118,34 @@ async function exportStudentInfoToPDF(studentId, filePath) {
             .replace('{{phone}}', student.phone)
             .replace('{{email}}', student.email)
             .replace('{{snils}}', student.snils)
+            .replace('{{direct}}', student.training_direction.code+' '+student.training_direction.name)
+            .replace('{{direct_p}}', student.profile)
             .replace('{{educationForm}}', student.educationForm)
-            .replace('{{graduationYear}}', student.graduationYear);
+            .replace('{{graduationYear}}', student.graduationYear_start)
+            .replace('{{graduationYear_end}}', student.graduationYear_end);
 
         let jobHistoriesHtml = '';
-        const job = await JobHistory.findAll({
+        const jobHistories = await JobHistory.findAll({
             where: { graduateId: studentId },
             order: [['startDate', 'ASC']],
-            include:[Employer]
+            include: [Employer],
         });
 
-
-        job.forEach((jobHistory) => {
+        jobHistories.forEach((jobHistory) => {
             let jobHistoryHtml = '';
-            if (jobHistory.jobType === 'выпустник') {
-                jobHistoryHtml = `
-                    <li>${formatDate(jobHistory.startDate)} Завершение обучения по направлению подготовки ${student.training_direction.code} ${student.training_direction.name}</li>
-                `;
-            }
-            if (jobHistory.jobType === 'работающий') {
+            if (jobHistory.jobType === 'Трудоустройство') {
                 jobHistoryHtml = `
                     <li>${formatDate(jobHistory.startDate)} Трудоустройство в ${jobHistory.employer.name}, должность ${jobHistory.position}</li>
                 `;
-            }
-            if (jobHistory.jobType === 'безработный') {
+            } else if (jobHistory.jobType === 'Безработный') {
                 jobHistoryHtml = `
                     <li>${formatDate(jobHistory.startDate)} Безработный, поставлен на учёт</li>
                 `;
-            }
-            if (jobHistory.jobType === 'самозанятый') {
+            } else if (jobHistory.jobType === 'Самозанятый') {
                 jobHistoryHtml = `
                     <li>${formatDate(jobHistory.startDate)} Самозанятый, род деятельности - ${jobHistory.selfEmploymentActivity}</li>
                 `;
-            }
-            if (jobHistory.jobType === 'служба в ВС') {
+            } else if (jobHistory.jobType === 'Служба в ВС') {
                 jobHistoryHtml = `
                     <li>${formatDate(jobHistory.startDate)} Служба в ВС РФ, в/ч ${jobHistory.militaryServiceLocation}, ${jobHistory.position}</li>
                 `;
@@ -172,6 +166,7 @@ async function exportStudentInfoToPDF(studentId, filePath) {
         console.log(`Сведения о студенте успешно экспортированы в PDF по пути: ${filePath}`);
     } catch (error) {
         console.error('Ошибка при экспорте сведений о студенте в PDF:', error);
+        throw error;
     }
 }
 

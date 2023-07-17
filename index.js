@@ -34,6 +34,12 @@ app.get("/student/add",function (request, response){
 app.get("/student/:id",function (request, response){
     response.sendFile(page+'lk_student.html')
 });
+app.get("/import",function (request, response){
+    response.sendFile(page+'import.html')
+});
+app.get("/export",function (request, response){
+    response.sendFile(page+'export.html')
+});
 app.use(express.static(__dirname + '/page'));
 // Запуск сервера на порту 3000
 app.listen(3000, () => {

@@ -2,31 +2,89 @@ const { exportStudentInfoToPDF} = require("./Helpers");
 const {Graduate,TrainingDirection}=require('./model')
 const {parse} = require('csv-parse');
 const fs = require('fs');
+const puppeteer = require('puppeteer');
 
 async function exportPdf(req, res) {
-    const graduateId = req.params.id;
-    const filePath = `./graduates/graduate_${graduateId}.pdf`;
+    const studentIds = req.body.id;
+    let students = [];
+
+    if (Array.isArray(studentIds)) {
+        // Если передан массив идентификаторов студентов, получаем информацию для каждого студента
+        for (const studentId of studentIds) {
+            const student = await Graduate.findByPk(studentId);
+            if (student) {
+                students.push(student);
+            }
+        }
+    } else if (studentIds === 'all') {
+        // Если передано значение 'all', получаем информацию для всех студентов
+        students = await Graduate.findAll();
+    } else {
+        // Если передан только один идентификатор студента, получаем информацию для этого студента
+        const student = await Graduate.findByPk(studentIds);
+        if (student) {
+            students.push(student);
+        }
+    }
+
+    if (students.length === 0) {
+        // Студенты не найдены
+        res.status(404).json({ error: 'Студенты не найдены' });
+        return;
+    }
+
+    const filePath = `./graduates/graduates.pdf`;
 
     try {
-        await exportStudentInfoToPDF(graduateId, filePath);
+        const browser = await puppeteer.launch({ headless: 'new' });
+        const page = await browser.newPage();
 
-        const fileStream = fs.createReadStream(filePath);
+        for (const student of students) {
+            const studentFilePath = `./graduates/graduate_${student.id}.pdf`;
+            await exportStudentInfoToPDF(student.id, studentFilePath);
+        }
 
-        // Устанавливаем заголовки для скачивания файла
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `attachment; filename=graduate_${graduateId}.pdf`);
+        await browser.close();
 
-        fileStream.pipe(res);
+        if (students.length === 1) {
+            // Если только один студент, отправляем его PDF-файл в ответ на запрос
+            const fileStream = fs.createReadStream(`./graduates/graduate_${students[0].id}.pdf`);
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', `attachment; filename=graduate_${students[0].id}.pdf`);
+            fileStream.pipe(res);
+            fileStream.on('end', () => {
+                fs.unlinkSync(`./graduates/graduate_${students[0].id}.pdf`); // Удаляем временный PDF-файл после отправки
+            });
+        } else {
+            // Create a single PDF file from individual student files
+            const mergePDFs = require('easy-pdf-merge');
+            const pdfFiles = students.map((student) => `./graduates/graduate_${student.id}.pdf`);
+            mergePDFs(pdfFiles, filePath, (err) => {
+                if (err) {
+                    console.error('Ошибка при объединении PDF-файлов:', err);
+                    res.status(500).json({ error: 'Ошибка при экспорте сведений о студентах в PDF' });
+                    return;
+                }
 
-        // Удаляем файл после завершения передачи
-        fileStream.on('close', () => {
-            fs.unlinkSync(filePath);
-        });
+                // Remove individual student PDF files
+                pdfFiles.forEach((file) => fs.unlinkSync(file));
+
+                // Send the merged PDF file as a download response
+                const fileStream = fs.createReadStream(filePath);
+                res.setHeader('Content-Type', 'application/pdf');
+                res.setHeader('Content-Disposition', `attachment; filename=graduates.pdf`);
+                fileStream.pipe(res);
+                fileStream.on('end', () => {
+                    fs.unlinkSync(filePath);
+                });
+            });
+        }
     } catch (error) {
-        console.error('Ошибка при экспорте сведений о выпускнике в PDF:', error);
-        res.status(500).json({ error: 'Ошибка при экспорте сведений о выпускнике в PDF' });
+        console.error('Ошибка при экспорте сведений о студентах в PDF:', error);
+        res.status(500).json({ error: 'Ошибка при экспорте сведений о студентах в PDF' });
     }
 }
+
 
 async function importFile(req, res) {
     try {
@@ -72,7 +130,14 @@ async function importFile(req, res) {
             if (snils) {
                 // Проверка, что СНИЛС состоит только из цифр
                 if (!/^\d+$/.test(snils)) {
-                    failedImports.push(snils)
+                    data={
+                            snils:snils,
+                            fullName: graduate.fullName,
+                            gender: graduate.gender,
+                            phone: graduate.phone,
+                            trainingDirectionName: graduate.trainingDirectionName
+                        }
+                    failedImports.push(data)
                     console.log(`Значение СНИЛС ${snils} содержит недопустимые символы. Пропускаю импорт выпускника.`);
                     continue;
                 }
@@ -83,7 +148,14 @@ async function importFile(req, res) {
                 });
 
                 if (existingGraduate) {
-                    existingGraduates.push(snils);
+                    data={
+                        snils:snils,
+                        fullName: graduate.fullName,
+                        gender: graduate.gender,
+                        phone: graduate.phone,
+                        trainingDirectionName: graduate.trainingDirectionName
+                    }
+                    existingGraduates.push(data);
                     console.log(`Запись выпускника с SNILS ${snils} уже существует в базе данных. Пропускаю импорт.`);
                     continue; // Пропускаем импорт, если запись уже существует
                 }
@@ -102,8 +174,14 @@ async function importFile(req, res) {
                         ...graduate,
                         trainingDirectionId: trainingDirection.id,
                     });
-
-                    newGraduates.push(snils);
+                    data={
+                        snils:snils,
+                        fullName: graduate.fullName,
+                        gender: graduate.gender,
+                        phone: graduate.phone,
+                        trainingDirectionName: graduate.trainingDirectionName
+                    }
+                    newGraduates.push(data);
                     console.log('Создан выпускник:', createdGraduate.toJSON());
                 } catch (error) {
                     failedImports.push(snils); // Добавление СНИЛСа в список неудачных импортов

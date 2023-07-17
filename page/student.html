@@ -11,13 +11,13 @@
   <script src="/js/student_training.js"></script>
   <script src="/js/student_job.js"></script>
   <script src="/js/student_main.js"></script>
-
+  <script src="/js/header.js"></script>
 </head>
 <body>
 <header>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
-      <a class="navbar-brand" href="/"><img src="/img/logo.svg" class="image" alt="" style="width: 300px"></a>
+      <a class="navbar-brand" href="/"><img src="img/logo.svg" class="image" alt="" style="width: 300px"></a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
               aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -33,15 +33,18 @@
               Студенты
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="students">Список студентов</a></li>
-              <li><a class="dropdown-item" href="student/add">Добавить студента</a></li>
+              <li><a class="dropdown-item" href="/students">Список студентов</a></li>
+              <li><a class="dropdown-item" href="/student/add">Добавить студента</a></li>
             </ul>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="employers">Работодатели</a>
+            <a class="nav-link" href="/employers">Работодатели</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="work_file">Импорт/Экспорт</a>
+            <a class="nav-link" href="/import">Импорт</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/export">Экспорт</a>
           </li>
           <li class="nav-item" id="logout-link">
             <a class="nav-link" href="">Выход</a>
