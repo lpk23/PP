@@ -16,7 +16,7 @@ async function search(req, res) {
     try {
         const result = await kladr.getData(kladrQuery);
 
-        // Filter out the entry with id "Free" from the result
+        // Чистит результат от лишних item
         const filteredResult = result.result.filter(item => item.id !== "Free");
 
         res.json(filteredResult);

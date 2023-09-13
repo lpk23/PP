@@ -73,7 +73,7 @@ const TrainingDirection = sequelize.define('training_direction', {
         allowNull: true,
     },
 }, {
-    tableName: 'training_direction' // добавьте это поле, указывающее имя таблицы
+    tableName: 'training_direction'
 });
 
 // Определение модели для таблицы "graduates"
@@ -137,7 +137,7 @@ const Graduate = sequelize.define('graduates', {
         allowNull: true,
     },
 }, {
-    tableName: 'graduates' // добавьте это поле, указывающее имя таблицы
+    tableName: 'graduates'
 });
 
 // Определение модели для таблицы "employers"
@@ -165,7 +165,7 @@ const Employer = sequelize.define('employers', {
         allowNull: true,
     },
 }, {
-    tableName: 'employers' // добавьте это поле, указывающее имя таблицы
+    tableName: 'employers'
 });
 
 // Определение модели для таблицы "roles"
@@ -181,7 +181,7 @@ const Role = sequelize.define('roles', {
         allowNull: false,
     },
 }, {
-    tableName: 'roles' // добавьте это поле, указывающее имя таблицы
+    tableName: 'roles'
 });
 
 // Определение модели для таблицы "users"
@@ -205,11 +205,11 @@ const User = sequelize.define('users', {
         allowNull: false,
     },
     resetCode: {
-        type: DataTypes.STRING(6), // Длина кода сброса пароля
+        type: DataTypes.STRING(6),
         allowNull: true,
     },
 }, {
-    tableName: 'users' // добавьте это поле, указывающее имя таблицы
+    tableName: 'users'
 });
 
 // Определение модели для таблицы "user_roles"
@@ -225,7 +225,7 @@ const UserRole = sequelize.define('user_roles', {
         allowNull: false,
     },
 }, {
-    tableName: 'user_roles' // добавьте это поле, указывающее имя таблицы
+    tableName: 'user_roles'
 });
 
 // Установка связей между моделями

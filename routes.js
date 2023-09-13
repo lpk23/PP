@@ -59,7 +59,7 @@ routes.get("/account", verifyToken, getAccount);
 routes.post("/forgot-password", forgotPassword);
 routes.post("/reset-password", resetPassword);
 routes.post("/verify-reset-code", verifyResetCode);
-routes.post("/Role", verifyToken, checkPermission([permission.ManageOtherAccounts]), updateUserRole);
+routes.post("/role", verifyToken, checkPermission([permission.ManageOtherAccounts]), updateUserRole);
 
 // Выпускники
 routes.post("/graduate", verifyToken, checkPermission([permission.ManageGraduates]), createGraduate);
@@ -101,4 +101,3 @@ module.exports = routes;
 // stats
 routes.get("/stat",verifyToken,getStat);
 
-// TODO: Упразнить права

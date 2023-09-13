@@ -36,7 +36,7 @@ async function exportPdf(req, res) {
     const filePath = `./graduates/graduates.pdf`;
 
     try {
-        const browser = await puppeteer.launch({ headless: 'new' });
+        const browser = await puppeteer.launch();
         const page = await browser.newPage();
 
         for (const student of students) {
@@ -56,7 +56,7 @@ async function exportPdf(req, res) {
                 fs.unlinkSync(`./graduates/graduate_${students[0].id}.pdf`); // Удаляем временный PDF-файл после отправки
             });
         } else {
-            // Create a single PDF file from individual student files
+            // объединение одиночных pdf файлов в один файл
             const mergePDFs = require('easy-pdf-merge');
             const pdfFiles = students.map((student) => `./graduates/graduate_${student.id}.pdf`);
             mergePDFs(pdfFiles, filePath, (err) => {
@@ -66,10 +66,10 @@ async function exportPdf(req, res) {
                     return;
                 }
 
-                // Remove individual student PDF files
+                // Удаления файлов
                 pdfFiles.forEach((file) => fs.unlinkSync(file));
 
-                // Send the merged PDF file as a download response
+                // Отправка файла
                 const fileStream = fs.createReadStream(filePath);
                 res.setHeader('Content-Type', 'application/pdf');
                 res.setHeader('Content-Disposition', `attachment; filename=graduates.pdf`);

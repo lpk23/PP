@@ -70,9 +70,9 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("deleteConfirmButton").addEventListener("click", function () {
         const recordId = document.getElementById("deleteModalLabel").getAttribute("data-record-id");
         deleteRecord(recordId);
-        const deleteModal = document.getElementById("deleteModal");
-        const bootstrapModal = new bootstrap.Modal(deleteModal);
-        bootstrapModal.hide();
+        // const deleteModal = document.getElementById("deleteModal");
+        // const bootstrapModal = new bootstrap.Modal(deleteModal);
+        // bootstrapModal.hide();
     });
 
     fetchData();
@@ -256,9 +256,9 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .then((data) => {
                 const deleteModal = document.getElementById("deleteModal");
-                const bootstrapModal = bootstrap.Modal.getInstance(deleteModal);
-                bootstrapModal.hide();
+                const bootstrapModal = bootstrap.Modal.getInstance(deleteModal)
                 fetchData(addButton.getAttribute("data-offset"));
+                bootstrapModal.hide();
             })
             .catch((error) => console.log("Ошибка:", error));
     }
